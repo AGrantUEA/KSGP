@@ -1,0 +1,13 @@
+echo $1
+current=$1
+Midori_loc=$current"/Midori"
+echo $Midori_loc
+
+
+echo $Midori_source
+cd $Midori_loc
+wget $Midori_source -o wget.log
+gunzip *.gz
+ls
+cd ..
+cd ..

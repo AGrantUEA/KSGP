@@ -1,0 +1,65 @@
+echo $1
+set -o xtrace
+current=$1
+PR2_loc=$current"/PR2"
+echo $PR2_loc
+
+cd $PR2_loc
+mkdir working_files
+
+PR2_initial=$PR2_full".fasta"
+
+#Separate into components
+
+PR2_plas=working_files/$PR2_full"_plas.fasta"
+PR2_euk=working_files/$PR2_full"_euk.fasta"
+
+PR2_apico=working_files/$PR2_full"_apicoplast.fasta"
+PR2_nucleo=working_files/$PR2_full"_nucleoplast.fasta"
+
+PR2_chro=working_files/$PR2_full"_chroplast.fasta"
+
+
+cat $PR2_initial | /gpfs/home/e130/seqkit/seqkit grep -r -p "k:Eukaryota" |/gpfs/home/e130/seqkit/seqkit grep -r -v -p "k:Eukaryota:"> $PR2_euk
+/gpfs/home/e130/seqkit/seqkit grep -r -p ":plas" $PR2_initial> $PR2_plas
+/gpfs/home/e130/seqkit/seqkit grep -r -p ":nucl" $PR2_initial> $PR2_nucleo
+/gpfs/home/e130/seqkit/seqkit grep -r -p ":apic" $PR2_initial> $PR2_apico
+
+#Convert Chroplast taxonomy into a Cyanobacteria assignment
+/gpfs/home/e130/seqkit/seqkit grep -r -p "Eukaryota:chro" $PR2_initial  | sed 's/tax=k:Eukaryota:chro,d:TSAR:chro,p:Rhizaria:chro-Cercozoa:chro,c:Filosa-Imbricatea:chro,o:Euglyphida:chro,f:Paulinellidae:chro/tax=k:Bacteria,p:Cyanobacteriota,c:Cyanobacteriia,o:PCC-6307,f:Cyanobiaceae/' > $PR2_chro
+
+cd $current
+cd ..
+sbatch --export=ALL $root/PR2_ribotyper_batch
+
+sleep 5h
+
+#######
+#Separate out Eukaryote sequences which are not assigned to SSU.Eukaryote or SSU.Euk-microsporidia as primary match
+
+cat $PR2_loc"/working_files/eukaryota_ribotyper_v2_output/eukaryota_ribotyper_v2_output.ribotyper.short.out" |grep "SSU.Euk" -v |grep 'tax=' |sed 's/;/ /' |tr -s ' '  | cut -d ' ' -f2 > $PR2_loc"/working_files/eukaryota_ribotyper_v2_output/eukaryota_ribotyper_output.ribotyper_v2_output.not_eukarya"
+grep "SSU.Euk" $PR2_loc"/working_files/eukaryota_ribotyper_v2_output/eukaryota_ribotyper_v2_output.ribotyper.short.out" |grep 'tax=' |sed 's/;/ /' |tr -s ' '  | cut -d ' ' -f2 > $PR2_loc"/working_files/eukaryota_ribotyper_v2_output/eukaryota_ribotyper_output.ribotyper_v2_output_eukarya"
+
+#$PR2_euk
+/gpfs/home/e130/seqkit/seqkit grep --threads 36 -r -f $PR2_loc"/working_files/eukaryota_ribotyper_v2_output/eukaryota_ribotyper_output.ribotyper_v2_output_eukarya" $PR2_loc"/working_files/pr2_version_5.0.0_SSU_UTAX_euk.fasta" \
+ |sed 's/g:Hartigia,s:Hartigia/g:Hartigia_I,s:Hartigia_I/'\
+ |sed 's/g:Enteromonas,s:Enteromonas/g:Enteromonas_F,s:Enteromonas_F/'\
+ > $PR2_loc"/working_files/pr2_version_5.0.0_SSU_UTAX_eukaryota_cleaned.fasta"
+/gpfs/home/e130/seqkit/seqkit grep -rv -f $PR2_loc"/working_files/eukaryota_ribotyper_v2_output/eukaryota_ribotyper_output.ribotyper_v2_output_eukarya" $PR2_loc"/working_files/pr2_version_5.0.0_SSU_UTAX_euk.fasta" > $PR2_loc"/working_files/pr2_version_5.0.0_SSU_UTAX_eukaryota_not_eukaryota.fasta"
+
+#Separate out those assigned to SSU.chloroplast as primary match
+grep "SSU.Chloroplast" $PR2_loc"/working_files/plastid_ribotyper_v2_output/plastid_ribotyper_v2_output.ribotyper.short.out" |grep 'tax=' |sed 's/;/ /' |tr -s ' '  | cut -d ' ' -f2 > $PR2_loc"/working_files/plastid_ribotyper_v2_output/plastid_ribotyper_v2_output_chloroplast"
+
+/gpfs/home/e130/seqkit/seqkit grep -r -f  $PR2_loc"/working_files/plastid_ribotyper_v2_output/plastid_ribotyper_v2_output_chloroplast" $PR2_loc"/working_files/pr2_version_5.0.0_SSU_UTAX_plas.fasta"> $PR2_loc"/working_files/pr2_version_5.0.0_SSU_UTAX_plastid_cleaned.fna"
+/gpfs/home/e130/seqkit/seqkit grep -rv -f  $PR2_loc"/working_files/plastid_ribotyper_v2_output/plastid_ribotyper_v2_output_chloroplast" $PR2_loc"/working_files/pr2_version_5.0.0_SSU_UTAX_plas.fasta"> $PR2_loc"/working_files/pr2_version_5.0.0_SSU_UTAX_plastid_not_plastid.fna"
+
+
+#Check plastids for Chimeras
+cat /gpfs/home/e130/lotus2/DB/RDPClassifier_16S_trainsetNo18_QiimeFormat/RefOTUs.fa /gpfs/home/e130/lotus2/DB/create_v3/files/Arabidopsis.fna|/gpfs/home/e130/seqkit/seqkit seq -u > $PR2_loc"/working_files/database_for_uchime.fna"
+/gpfs/home/e130/usearch_64bit/usearch11.0.667_i86linux64 -uchime2_ref $PR2_loc"/working_files/pr2_version_5.0.0_SSU_UTAX_plas.fasta" -db  $PR2_loc"/working_files/database_for_uchime.fna" -uchimeout $PR2_loc"/working_files/plastid_uchime_high_conf.txt" -strand plus -mode high_confidence -chimeras $PR2_loc"/working_files/plastid_uchime_high_conf_chimeras.fna" -notmatched $PR2_loc"/working_files/plastid_uchime_high_conf_not_matched.fna"
+
+grep ">" $PR2_loc"/working_files/plastid_uchime_high_conf_chimeras.fna" | sed 's/>//'| cut -f1 -d";" > $PR2_loc"/working_files/plastid_uchime_high_conf_chimeras.id"
+/gpfs/home/e130/seqkit/seqkit grep -r -v -f $PR2_loc"/working_files/plastid_uchime_high_conf_chimeras.id" $PR2_loc"/working_files/pr2_version_5.0.0_SSU_UTAX_plas.fasta" > $PR2_loc"/working_files/pr2_version_5.0.0_SSU_UTAX_plas_no_chimeras.fasta"
+
+cp $PR2_loc"/working_files/plastid_uchime_high_conf_chimeras.id" $current/final_files/pr2_version_5.0.0_SSU_plastid_chimeras
+cp $current/PR2/working_files/eukaryota_ribotyper_v2_output/eukaryota_ribotyper_output.ribotyper_v2_output.not_eukarya $current/final_files/pr2_version_5.0.0_SSU_non_eukaryotes_mislabelled

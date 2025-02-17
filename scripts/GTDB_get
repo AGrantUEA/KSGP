@@ -1,0 +1,12 @@
+echo $1
+current=$1
+GTDB_loc=$current"/GTDB"
+echo $GTDB_loc
+echo $GTDB_source
+cd $GTDB_loc
+wget $GTDB_source -o wget.log
+
+ls
+cd ..
+cd ..
+

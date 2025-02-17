@@ -1,0 +1,29 @@
+set -o xtrace
+export karst_loc=$current"/Karst"
+echo $karst_loc
+
+
+
+
+sbatch --export=ALL karst_ribotyper_batch
+sleep 5h
+
+grep 'SSU' $karst_loc"/working_files/Karst_ribotyper_output/Karst_ribotyper_output.ribotyper.short.out"| tr -s ' '  | cut -d ' ' -f2 > $karst_loc"/working_files/Karst_SSU.id"
+
+grep 'SSU.Archaea' $karst_loc"/working_files/Karst_ribotyper_output/Karst_ribotyper_output.ribotyper.short.out"| tr -s ' '  | cut -d ' ' -f2  |sed 's/ENA|//'|sed 's/|.*//'> $karst_loc"/working_files/Karst_Archaea.id"
+
+grep 'SSU.Eukarya' $karst_loc"/working_files/Karst_ribotyper_output/Karst_ribotyper_output.ribotyper.short.out"| tr -s ' '  | cut -d ' ' -f2 |sed 's/ENA|//'|sed 's/|.*//'> $karst_loc"/working_files/Karst_Eukarya.id"
+
+/gpfs/home/e130/seqkit/seqkit grep -r --threads 32 -f $karst_loc"/working_files/Karst_SSU.id" $karst > $karst_loc"/working_files/karst_ssu.fna" 
+/gpfs/home/e130/usearch_64bit/usearch11.0.667_i86linux64 -cluster_fast $karst_loc"/working_files/karst_ssu.fna" -threads 32\
+ -id 0.995 -sort length -uc $karst_loc"/working_files/karst_ssu.uc" -sizeout\
+ -centroids $karst_loc"/working_files/karst_ssu_clus.fna"
+
+sed 's/ENA|//' $karst_loc"/working_files/karst_ssu_clus.fna" |sed 's/|.*//' >$karst_loc"/working_files/karst_ssu_clus_id.fna"
+
+/gpfs/home/e130/seqkit/seqkit grep -r --threads 32 -f $karst_loc"/working_files/Karst_Eukarya.id" $karst_loc"/working_files/karst_ssu.fna"  > $karst_loc"/working_files/karst_Eukarya.fna" 
+/gpfs/home/e130/seqkit/seqkit grep -r --threads 32 -f $karst_loc"/working_files/Karst_Archaea.id" $karst_loc"/working_files/karst_ssu.fna"  > $karst_loc"/working_files/karst_Archaea.fna" 
+
+
+
+

@@ -1,0 +1,25 @@
+echo $1
+current=$1
+Midori_loc=$current"/Midori"
+echo $Midori_loc
+
+cd $Midori_loc
+Midori_full="Midori???"
+Midori_initial=$Midori_full".fasta"
+module add python/anaconda/2020.11/3.8
+module add hmmer/3.3
+
+source /gpfs/home/e130/ribovore/env_vars
+
+ribotyper -f -n 18  $current/Midori/MIDORI2_LONGEST_NUC_GB261_srRNA_RDP.fasta $current/Midori/working_files/Midori_ribotyper_output
+ 
+grep "SSU.Mito" $current/Midori/working_files/Midori_ribotyper_output/Midori_ribotyper_output.ribotyper.short.out |tr -s ' '  | cut -d ' ' -f2 > $Midori_loc"/working_files/Midori_SSU_mitochondria.id"
+grep -v "SSU.Mito" $current/Midori/working_files/Midori_ribotyper_output/Midori_ribotyper_output.ribotyper.short.out> $current/final_files/Midori_mitochondria_SSU_wrongly_annotated
+
+
+
+/gpfs/home/e130/seqkit/seqkit grep -r -f  $Midori_loc"/working_files/Midori_SSU_mitochondria.id" $current/Midori/MIDORI2_LONGEST_NUC_GB261_srRNA_RDP.fasta| sed 's/.</./'| sed 's/.>/./'|sed 's/_[0-9]\+/:mito/g'|sed 's/family_//'|sed 's/order_//'|sed 's/class_//'> $current/Midori/working_files/mt_correct_RDP.fasta
+
+
+
+

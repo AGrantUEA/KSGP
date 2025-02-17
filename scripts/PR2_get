@@ -1,0 +1,15 @@
+echo $1
+set -o xtrace
+current=$1
+PR2_loc=$current"/PR2"
+echo $PR2_loc
+
+
+echo $PR2_source
+cd $PR2_loc
+wget $PR2_source -o wget.log
+
+gunzip *.gz
+ls
+cd ..
+cd ..

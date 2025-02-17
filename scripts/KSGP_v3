@@ -1,0 +1,135 @@
+#script to create KSGP
+export OMP_NUM_THREADS=48
+export root=/gpfs/home/e130/KSGP/
+export version="v3"
+export current=$root$version
+
+export GTDB_source=https://data.ace.uq.edu.au/public/gtdb/data/releases/release220/220.0/genomic_files_all/ssu_all_r220.fna
+export GTDB_ssu=ssu_all_r220
+export PR2_source=https://github.com/pr2database/pr2database/releases/download/v5.0.0/pr2_version_5.0.0_SSU_UTAX.fasta.gz
+export PR2_full=pr2_version_5.0.0_SSU_UTAX
+export Midori_source=https://www.reference-midori.info/download/Databases/GenBank261_2024-06-15/RDP/longest/MIDORI2_LONGEST_NUC_GB261_srRNA_RDP.fasta.gz
+export ncbi_archaea=https://ftp.ncbi.nlm.nih.gov/refseq/TargetedLoci/Archaea/archaea.16SrRNA.fna.gz
+export ncbi_bacteria=https://ftp.ncbi.nlm.nih.gov/refseq/TargetedLoci/Bacteria/bacteria.16SrRNA.fna.gz
+export karst=/gpfs/home/e130/lotus2/DB/OBEP01.fasta
+
+
+mkdir $current
+mkdir $current/to_annotate
+mkdir $current"/GTDB"
+mkdir $current"/GTDB/working_files"
+mkdir $current/PR2
+mkdir $current/PR2/working_files
+mkdir $current/Midori
+mkdir $current/Midori/working_files
+mkdir $current/final_files
+mkdir $current/ncbi
+mkdir $current/Karst
+mkdir $current/Karst/working_files
+
+
+#get and process sequences from PR2
+./PR2_get $current
+./PR2_process $current &
+
+#process and cluster Karst sequences
+./karst_process &
+
+
+#get and process sequences from Midori2
+./Midori_get $current
+./Midori_process $current &
+
+
+
+
+./GTDB_get $current
+./GTDB_process $current
+
+GTDB_cleaned_RDP=$current/GTDB/working_files/ssu_all_right_class_dedup.fna
+./RDP2Lotus2 $GTDB_cleaned_RDP $current/final_files/GTDB_cleaned
+./RDP2Sintax $GTDB_cleaned_RDP $current/final_files/GTDB_sintax.fna
+
+
+#recombine components of PR2
+cat $current/PR2/working_files/pr2_version_5.0.0_SSU_UTAX_eukaryota_cleaned.fasta \
+    $current/PR2/working_files/pr2_version_5.0.0_SSU_UTAX_nucleoplast.fasta\
+    $current/PR2/working_files/pr2_version_5.0.0_SSU_UTAX_apicoplast.fasta\
+     |sed 's/,p:/-/'|sed 's/,d:/,p:/'\
+       >tempfile
+cat  $current/PR2/working_files/pr2_version_5.0.0_SSU_UTAX_plas_no_chimeras.fasta |sed 's/k:Eukaryota.*plas,o:/k:Bacteria,p:Cyanobacteria,c:chloroplast,o:/'|sed 's/:plas/_plas/g' >>tempfile
+cat  $current/PR2/working_files/pr2_version_5.0.0_SSU_UTAX_chroplast.fasta >> tempfile
+#cat tempfile >> $current/final_files/GTDB_plus_sintax.fna
+sed 's/;tax=.*//' tempfile > PR2_temp.fasta
+grep '>' tempfile |sed 's/>//'|sed 's/;tax=/\t/'|sed 's/:/__/g'|sed 's/,/;/g' > PR2_temp.tax
+
+#make final changes to Midori
+./RDPmidori2Lotus2 $current/Midori/working_files/mt_correct_RDP.fasta $current/Midori/working_files/mt_tempfile
+./RDPmidori2Sintax $current/Midori/working_files/mt_correct_RDP.fasta $current/Midori/working_files/mt_correct_RDP_Sintax.fasta 
+#change taxonomy to deal with cases where genus name is used in different kingdoms
+$current/Midori/working_files/taxonomy_changes_tax
+$current/Midori/working_files/taxonomy_changes_sintax
+
+
+#combine component parts of GTDB+
+
+cat $current/Midori/working_files/mt_tempfile.fasta \
+    $current/final_files/GTDB_cleaned.fasta \
+    PR2_temp.fasta\
+       >$current/final_files/GTDB_plus.fasta
+cat $current/Midori/working_files/mt_tempfile.tax \
+    $current/final_files/GTDB_cleaned.tax \
+    PR2_temp.tax \
+        >$current/final_files/GTDB_plus.tax
+
+cat  $current/final_files/GTDB_sintax.fna\
+     $current/Midori/working_files/mt_correct_RDP_Sintax.fasta \
+    tempfile\
+    > $current/final_files/GTDB_plus_sintax.fna
+
+
+rm -f tempfile
+rm -f mt_tempfile.fasta
+rm -f mt_tempfile.tax
+
+#create sintax version of GTDB
+
+#get files to be used for sequences not annotations
+
+cd $current/ncbi/
+wget https://ftp.ncbi.nlm.nih.gov/refseq/TargetedLoci/Archaea/archaea.16SrRNA.fna.gz -o wget.log
+wget https://ftp.ncbi.nlm.nih.gov/refseq/TargetedLoci/Bacteria/bacteria.16SrRNA.fna.gz -o wget.log
+gunzip archaea.16SrRNA.fna.gz
+gunzip bacteria.16SrRNA.fna.gz
+cat archaea.16SrRNA.fna bacteria.16SrRNA.fna |sed 's/ .*//'> $current/to_annotate/raw.fasta
+#determine ids to remove these from Silva
+grep '>' $current/to_annotate/raw.fasta |sed 's/>//' > prokaryote.ids
+
+
+./Silva_get $current
+
+Refseq_archaea="$current/ncbi/archaea.16SrRNA.fna"
+Refseq_bacteria="$current/ncbi/bacteria.16SrRNA.fna"
+SILVA=$current/Silva/silva_prokaryotes_cleaned.fasta
+Karst_cleaned=$current/Karst/working_files/karst_ssu_clus_id.fna
+
+to_annotate="$current/to_annotate/raw"
+#cat $GTDB_cleaned".fasta" $PR2_cleaned".fasta" $Midori_cleaned".fasta" > "GTDB_plus_"$version".fasta"
+#cat $GTDB_cleaned".tax" $PR2_cleaned".tax" $Midori_cleaned".tax" > "GTDB_plus_"$version".tax"
+cat $Refseq_archaea $Refseq_bacteria |sed 's/ .*//'> $current/ncbi/prokaryote_id.fna
+cat $Karst_cleaned $SILVA $current/ncbi/prokaryote_id.fna> $to_annotate".fasta"
+cat $current/final_files/GTDB_plus.fasta $to_annotate".fasta" > $current/final_files/KSGP.fasta
+
+/gpfs/home/e130/usearch_64bit/usearch11.0.667_i86linux64 -sintax $current/to_annotate/raw.fasta -db $current/final_files/GTDB_plus_sintax.fna -strand both -sintax_cutoff 0.8 -threads 24 -tabbedout $current/to_annotate/raw.sintax
+./sintaxout2tax $current/to_annotate/raw.sintax $current/final_files/annotated_using_sintax.tax
+
+
+cat $current/final_files/annotated_using_sintax.tax $current/final_files/GTDB_plus.tax > $current/final_files/KSGP.tax
+cat $current/final_files/GTDB_plus.fasta $current/to_annotate/raw.fasta > $current/final_files/KSGP.fasta
+cat $current/to_annotate/raw.fasta.hier $current/to_annotate/nohits.hier > $current/to_annotate/raw.fasta2.hier 
+
+module add R
+Rscript  /gpfs/home/e130/KSGP/process_clusters
+sed -i 's/;/\t/' $current/final_files/lca_plus_tax.txt
+cat $current/final_files/lca_plus_tax.txt $current/final_files/GTDB_plus.tax > $current/final_files/KSGP_plus.tax
+cat $current/to_annotate/annotated_using_LCA.tax $current/final_files/GTDB_plus.tax > $current/final_files/KSGP_lca.tax

@@ -1,0 +1,216 @@
+echo $1
+set -o xtrace
+
+export GTDB_loc=$current"/GTDB"
+echo $GTDB_loc
+
+cd $GTDB_loc
+mkdir working_files
+
+initial=$GTDB_ssu".fna"
+initial2="GTDB_ssu_temp.fna"
+echo "Number of sequences in GTDB"
+grep -c '>' $initial
+
+#remove size annotations and sequences shorter than 200 bp
+sed 's/\[.*//'  $initial |/gpfs/home/e130/seqkit/seqkit seq -m 200 > GTDB_ssu_temp.fna
+
+
+#generate tax file and strip fasta file down to id
+cat  $initial |grep '>'|sed 's/\[.*//' |sed 's/>//'|sed 's/ /\t/'> GTDB_ssu.tax
+cat  $initial |sed 's/ d__.*//'> GTDB_ssu.fna
+
+
+cd ..
+cd ..
+#run ribotyper
+
+sbatch --export=ALL /gpfs/home/e130/KSGP/ribotyper_GTDB
+sleep 3h
+squeue -u e130
+
+grep -v 'SSU.Bacteria' $GTDB_loc/working_files/GTDB_ribotyper_output/GTDB_ribotyper_output.ribotyper.short.out |grep -v 'SSU.Archaea' > $GTDB_loc/final_files/GTDB_SSU_rejected_by_ribotyper
+
+
+#parse ribotyper output and summarise results
+
+cat $GTDB_loc"/working_files/GTDB_ribotyper_output/GTDB_ribotyper_output.ribotyper.short.out" |tr -s ' ' |cut -f3 -d' '| sort |uniq -c
+grep -c 'SSU.Archaea' $GTDB_loc"/working_files/GTDB_ribotyper_output/GTDB_ribotyper_output.ribotyper.short.out"
+grep -c 'SSU.Bacteria' $GTDB_loc"/working_files/GTDB_ribotyper_output/GTDB_ribotyper_output.ribotyper.short.out"
+grep -c 'SSU.Eukarya' $GTDB_loc"/working_files/GTDB_ribotyper_output/GTDB_ribotyper_output.ribotyper.short.out"
+grep -c 'SSU.Euk-Apicoplast' $GTDB_loc"/working_files/GTDB_ribotyper_output/GTDB_ribotyper_output.ribotyper.short.out"
+grep -c 'SSU.Euk-Microsporidia' $GTDB_loc"/working_files/GTDB_ribotyper_output/GTDB_ribotyper_output.ribotyper.short.out"
+
+grep -c 'SSU.Chloroplast' $GTDB_loc"/working_files/GTDB_ribotyper_output/GTDB_ribotyper_output.ribotyper.short.out"
+grep -c 'LSU.Bacteria' $GTDB_loc"/working_files/GTDB_ribotyper_output/GTDB_ribotyper_output.ribotyper.short.out"
+grep -c 'SSU.Mito' $GTDB_loc"/working_files/GTDB_ribotyper_output/GTDB_ribotyper_output.ribotyper.short.out"
+grep -c 'FAIL' $GTDB_loc"/working_files/GTDB_ribotyper_output/GTDB_ribotyper_output.ribotyper.short.out"
+
+grep 'FAIL' $GTDB_loc"/working_files/GTDB_ribotyper_output/GTDB_ribotyper_output.ribotyper.short.out"|tr -s ' ' |cut -f3 -d' '| sort |uniq -c
+
+grep ' - ' $GTDB_loc"/working_files/GTDB_ribotyper_output/GTDB_ribotyper_output.ribotyper.short.out"
+grep -c ' - ' $GTDB_loc"/working_files/GTDB_ribotyper_output/GTDB_ribotyper_output.ribotyper.short.out"
+grep -c '*NoHits' $GTDB_loc"/working_files/GTDB_ribotyper_output/GTDB_ribotyper_output.ribotyper.short.out"
+
+
+
+
+
+grep 'SSU.Archaea' $GTDB_loc"/working_files/GTDB_ribotyper_output/GTDB_ribotyper_output.ribotyper.short.out"| tr -s ' '  | cut -d ' ' -f2 > $GTDB_loc"/working_files/GTDB_Archaea.id"
+grep 'SSU.Archaea' $GTDB_loc"/working_files/GTDB_ribotyper_output/GTDB_ribotyper_output.ribotyper.short.out"|grep 'PASS' | tr -s ' '  | cut -d ' ' -f2 > $GTDB_loc"/working_files/GTDB_Archaea_good.id"
+grep 'SSU.Archaea' $GTDB_loc"/working_files/GTDB_ribotyper_output/GTDB_ribotyper_output.ribotyper.short.out"| grep 'FAIL'|tr -s ' '  | cut -d ' ' -f2 > $GTDB_loc"/working_files/GTDB_Archaea_fail.id"
+grep 'SSU.Bacteria' $GTDB_loc"/working_files/GTDB_ribotyper_output/GTDB_ribotyper_output.ribotyper.short.out"| grep 'FAIL'|tr -s ' '  | cut -d ' ' -f2 > $GTDB_loc"/working_files/GTDB_Bacteria_fail.id"
+
+grep 'SSU.Archaea' $GTDB_loc"/working_files/GTDB_ribotyper_output/GTDB_ribotyper_output.ribotyper.short.out" > $GTDB_loc"/working_files/GTDB_Archaea.short"
+grep 'SSU.Bacteria' $GTDB_loc"/working_files/GTDB_ribotyper_output/GTDB_ribotyper_output.ribotyper.short.out" | tr -s ' '  | cut -d ' ' -f2 > $GTDB_loc"/working_files/GTDB_Bacteria.id"
+grep 'SSU.Bacteria' $GTDB_loc"/working_files/GTDB_ribotyper_output/GTDB_ribotyper_output.ribotyper.short.out" | grep 'PASS'|tr -s ' '  | cut -d ' ' -f2 > $GTDB_loc"/working_files/GTDB_Bacteria_good.id"
+grep '*NoHits' $GTDB_loc"/working_files/GTDB_ribotyper_output/GTDB_ribotyper_output.ribotyper.short.out" | tr -s ' '  | cut -d ' ' -f2 |grep '_'> $GTDB_loc"/working_files/GTDB_NoHits.id"
+
+grep 'SSU.Bacteria' $GTDB_loc"/working_files/GTDB_ribotyper_output/GTDB_ribotyper_output.ribotyper.short.out"  > $GTDB_loc"/working_files/GTDB_Bacteria.short"
+grep 'SSU.Eukarya' $GTDB_loc"/working_files/GTDB_ribotyper_output/GTDB_ribotyper_output.ribotyper.short.out" | tr -s ' '  | cut -d ' ' -f2 > $GTDB_loc"/working_files/GTDB_Eukarya.id"
+grep 'SSU.Chloroplast' $GTDB_loc"/working_files/GTDB_ribotyper_output/GTDB_ribotyper_output.ribotyper.short.out" | tr -s ' '  | cut -d ' ' -f2 > $GTDB_loc"/working_files/GTDB_Chloroplast.id"
+grep 'LSU.Bacteria' $GTDB_loc"/working_files/GTDB_ribotyper_output/GTDB_ribotyper_output.ribotyper.short.out" | tr -s ' '  | cut -d ' ' -f2 > $GTDB_loc"/working_files/GTDB_LSU.id"
+grep 'SSU.Mito' $GTDB_loc"/working_files/GTDB_ribotyper_output/GTDB_ribotyper_output.ribotyper.short.out" | tr -s ' '  | cut -d ' ' -f2 > $GTDB_loc"/working_files/GTDB_mito.id"
+grep 'SSU.Euk-Apicoplast'  $GTDB_loc"/working_files/GTDB_ribotyper_output/GTDB_ribotyper_output.ribotyper.short.out" | tr -s ' '  | cut -d ' ' -f2 > $GTDB_loc"/working_files/GTDB_apicoplast.id"
+grep 'SSU.Euk-Microsporidia'  $GTDB_loc"/working_files/GTDB_ribotyper_output/GTDB_ribotyper_output.ribotyper.short.out" | tr -s ' '  | cut -d ' ' -f2 > $GTDB_loc"/working_files/GTDB_microsporidia.id"
+
+
+/gpfs/home/e130/seqkit/seqkit grep -r --threads 48 -f $GTDB_loc"/working_files/GTDB_Archaea.id" $GTDB_loc"/"$initial2 > $GTDB_loc"/working_files/ssu_all_Archaea.fna" 
+/gpfs/home/e130/seqkit/seqkit grep -r --threads 48 -f $GTDB_loc"/working_files/GTDB_Bacteria.id" $GTDB_loc"/"$initial2 > $GTDB_loc"/working_files/ssu_all_Bacteria.fna" 
+
+
+/gpfs/home/e130/seqkit/seqkit grep -r --threads 48 -f $GTDB_loc"/working_files/GTDB_Archaea_fail.id" $GTDB_loc"/"$initial2 > $GTDB_loc"/working_files/ssu_all_Archaea_fail.fna" 
+/gpfs/home/e130/seqkit/seqkit grep -r --threads 48 -f $GTDB_loc"/working_files/GTDB_Bacteria_fail.id" $GTDB_loc"/"$initial2 > $GTDB_loc"/working_files/ssu_all_Bacteria_fail.fna" 
+
+
+
+/gpfs/home/e130/seqkit/seqkit grep -r --threads 48 -f $GTDB_loc"/working_files/GTDB_Archaea_good.id" $GTDB_loc"/"$initial2 > $GTDB_loc"/working_files/ssu_all_Archaea_good.fna" 
+/gpfs/home/e130/seqkit/seqkit grep -r --threads 48 -f $GTDB_loc"/working_files/GTDB_Bacteria_good.id" $GTDB_loc"/"$initial2 > $GTDB_loc"/working_files/ssu_all_Bacteria_good.fna" 
+
+/gpfs/home/e130/seqkit/seqkit grep -r --threads 48 -f $GTDB_loc"/working_files/GTDB_apicoplast.id" $GTDB_loc"/"$initial2 > $GTDB_loc"/working_files/ssu_all_apicoplast.fna" 
+/gpfs/home/e130/seqkit/seqkit grep -r --threads 48 -f $GTDB_loc"/working_files/GTDB_microsporidia.id" $GTDB_loc"/"$initial2 > $GTDB_loc"/working_files/ssu_all_microsporidia.fna" 
+
+
+/gpfs/home/e130/seqkit/seqkit grep -r --threads 48 -f $GTDB_loc"/working_files/GTDB_Eukarya.id" $GTDB_loc"/"$initial2 > $GTDB_loc"/working_files/ssu_all_Eukarya.fna" 
+
+#/gpfs/home/e130/seqkit/seqkit grep -r -f $GTDB_loc"/working_files/GTDB_Eukarya.id" $GTDB_loc"/"$initial2 > $GTDB_loc"/working_files/ssu_all_Eukarya.fna" &
+
+
+#/gpfs/home/e130/seqkit/seqkit grep -r -f $GTDB_loc"/working_files/GTDB_Eukarya.id" $GTDB_loc"/"$initial2 > $GTDB_loc"/working_files/ssu_all_Eukarya.fna" &
+/gpfs/home/e130/seqkit/seqkit grep -r --threads 48 -f $GTDB_loc"/working_files/GTDB_Chloroplast.id" $GTDB_loc"/"$initial2> $GTDB_loc"/working_files/ssu_all_Chloroplast.fna" 
+/gpfs/home/e130/seqkit/seqkit grep -r --threads 48 -f $GTDB_loc"/working_files/GTDB_LSU.id" $GTDB_loc"/"$initial2 > $GTDB_loc"/working_files/ssu_all_LSU.fna" 
+#/gpfs/home/e130/seqkit/seqkit grep -r -f $GTDB_loc"/working_files/GTDB_mito.id" $GTDB_loc"/"$initial2 > $GTDB_loc"/working_files/ssu_all_mito.fna" 
+
+/gpfs/home/e130/seqkit/seqkit grep -r --threads 48 -f $GTDB_loc"/working_files/GTDB_mito.id" $GTDB_loc"/"$initial2 > $GTDB_loc"/working_files/ssu_all_mito.fna" 
+/gpfs/home/e130/seqkit/seqkit grep -r --threads 48 -f $GTDB_loc"/working_files/GTDB_NoHits.id" $GTDB_loc"/"$initial2 > $GTDB_loc"/working_files/ssu_all_NoHits.fna" 
+
+grep -c 'd__Bacteria' $GTDB_loc"/working_files/ssu_all_Archaea_good.fna"
+grep -c 'd__Bacteria' $GTDB_loc"/working_files/ssu_all_Archaea_fail.fna"
+grep -c 'd__Archaea' $GTDB_loc"/working_files/ssu_all_Bacteria.fna"
+#separate good archaea that are labelled as Archaea
+
+/gpfs/home/e130/seqkit/seqkit grep -rn --threads 48 -p 'd__Archaea' $GTDB_loc"/working_files/ssu_all_Archaea_good.fna"> $GTDB_loc"/working_files/ssu_all_Archaea_good_correct.fna"
+/gpfs/home/e130/seqkit/seqkit grep -rn --threads 48 -p 'd__Archaea' $GTDB_loc"/working_files/ssu_all_Archaea_fail.fna"> $GTDB_loc"/working_files/ssu_all_Archaea_fail_correct.fna"
+/gpfs/home/e130/seqkit/seqkit grep -rn --threads 48 -p 'd__Bacteria' $GTDB_loc"/working_files/ssu_all_Archaea_good.fna"> $GTDB_loc"/working_files/ssu_all_Archaea_good_incorrect.fna"
+/gpfs/home/e130/seqkit/seqkit grep -rn --threads 48 -p 'd__Bacteria' $GTDB_loc"/working_files/ssu_all_Bacteria_fail.fna"> $GTDB_loc"/working_files/ssu_all_Bacteria_fail_correct.fna"
+
+
+grep -c 'd__Archaea' $GTDB_loc"/working_files/ssu_all_Bacteria.fna"
+
+
+#reconstitute GTDB Archaea and Bacteria after removing incorrect sequences
+
+/gpfs/home/e130/seqkit/seqkit grep -rnv --threads 48 -p "Archaea" $GTDB_loc"/working_files/ssu_all_Bacteria_good.fna"> $GTDB_loc"/working_files/ssu_all_Bacteria_good_correct.fna"
+/gpfs/home/e130/seqkit/seqkit grep -rn --threads 48 -p "Archaea" $GTDB_loc"/working_files/ssu_all_Bacteria_good.fna"> $GTDB_loc"/working_files/ssu_all_Bacteria_good_labelled_archaea.fna"
+
+cat $GTDB_loc"/working_files/ssu_all_Archaea_good_correct.fna" $GTDB_loc"/working_files/ssu_all_Archaea_fail_correct.fna" $GTDB_loc"/working_files/ssu_all_Bacteria_good.fna" > $GTDB_loc"/working_files/ssu_all_ribovore_Bacteria_and_Archaea.fna"
+grep -c '>' $GTDB_loc"/working_files/ssu_all_Archaea_good_correct.fna"
+grep -c '>' $GTDB_loc"/working_files/ssu_all_Archaea_fail_correct.fna"
+grep -c '>' $GTDB_loc"/working_files/ssu_all_Bacteria_good.fna"
+grep -c '>' $GTDB_loc"/working_files/ssu_all_Bacteria_good_correct.fna"
+grep -c '>' $GTDB_loc"/working_files/ssu_all_Bacteria_good_labelled_archaea.fna"
+
+#set up and run loot
+
+#need to replace first whitespace with$ to avoid header being stripped out
+#edit original headers for RDP
+
+sed 's/ /%/'  $GTDB_loc"/working_files/ssu_all_ribovore_Bacteria_and_Archaea.fna" | sed 's/%/\tRoot;/'  |sed 's/.__//g' >  $GTDB_loc"/working_files/ssu_all_ribovore_Bacteria_and_Archaea_RDP.fna"
+
+
+#set up tax file for LOOT
+cat /gpfs/home/e130/KSGP/taxheader > $GTDB_loc"/working_files/ssu_all_ribovore_RDP.tax"
+grep '>' $GTDB_loc"/working_files/ssu_all_ribovore_Bacteria_and_Archaea_RDP.fna" |sed 's/>//'  |sed 's/;/\t/g'|sed 's/Root\t//'>>$GTDB_loc"/working_files/ssu_all_ribovore_RDP.tax"
+
+
+python /gpfs/home/e130/RDPTools/lineage2taxTrain.py $GTDB_loc"/working_files/ssu_all_ribovore_RDP.tax"> $GTDB_loc"/working_files/ssu_all_ribovore_RDP.txt" 
+
+#split file and run LOOT
+
+
+cd $GTDB_loc"/working_files"
+/gpfs/home/e130/seqkit/seqkit split -s 10000 --force $GTDB_loc"/working_files/ssu_all_ribovore_Bacteria_and_Archaea_RDP.fna"
+
+cd $root
+
+for OUTPUT in $(ls $GTDB_loc/working_files/ssu_all_ribovore_Bacteria_and_Archaea_RDP.fna.split/*.fna)
+do
+echo $OUTPUT
+#sed "s%filename%$OUTPUT%g"  loot_batch >loot_batch2
+sbatch --export=ALL loot_batch
+done
+
+sleep 8h
+squeue -u e130
+
+#set up second round of loot
+
+cat $GTDB_loc/working_files/ssu_all_ribovore_Bacteria_and_Archaea_RDP.fna.split/ssu_all_ribovore_Bacteria_and_Archaea_RDP.part_*.fna.txt|grep "SEQ" |grep "Kingdom"|  cut -f1|cut -f2 -d" " > $GTDB_loc/working_files/ssu_all_wrong_kingdom.id
+
+/gpfs/home/e130/seqkit/seqkit grep -r --threads 48 -v -f $GTDB_loc/working_files/ssu_all_wrong_kingdom.id $GTDB_loc/working_files/ssu_all_ribovore_Bacteria_and_Archaea_RDP.fna  |/gpfs/home/e130/seqkit/seqkit seq -m 200 > $GTDB_loc/working_files/ssu_all_right_kingdom.fna
+
+/gpfs/home/e130/seqkit/seqkit split -s 10000 $GTDB_loc/working_files/ssu_all_right_kingdom.fna
+
+
+
+#set up tax file for LOOT
+cat $current/taxheader > $GTDB_loc"/working_files/ssu_all_ribovore_RDP2.tax"
+grep '>' $GTDB_loc/working_files/ssu_all_right_kingdom.fna |sed 's/>//'  |sed 's/;/\t/g' |sed 's/Root\t//' >> $GTDB_loc"/working_files/ssu_all_ribovore_RDP2.tax"
+
+
+python /gpfs/home/e130/RDPTools/lineage2taxTrain.py $GTDB_loc"/working_files/ssu_all_ribovore_RDP2.tax"> $GTDB_loc"/working_files/ssu_all_ribovore_RDP2.txt"
+
+cd $root
+
+for OUTPUT in $(ls $GTDB_loc/working_files/ssu_all_right_kingdom.fna.split/*.fna)
+do
+echo $OUTPUT
+#sed "s%filename%$OUTPUT%g"  loot_batch_p >loot_batch_p2
+sbatch --export=ALL  loot_batch_p
+done
+
+sleep 8h
+squeue -u e130
+
+cat $GTDB_loc/working_files/ssu_all_right_kingdom.fna.split/ssu_all_right_kingdom.part_*.fna.txt|grep "SEQ" |grep "Kingdom"|  cut -f1|cut -f2 -d" " > $GTDB_loc/working_files/ssu_all_wrong_class.id
+cat $GTDB_loc/working_files/ssu_all_right_kingdom.fna.split/ssu_all_right_kingdom.part_*.fna.txt|grep "SEQ" |grep "Phylum"|  cut -f1|cut -f2 -d" " >> $GTDB_loc/working_files/ssu_all_wrong_class.id
+cat $GTDB_loc/working_files/ssu_all_right_kingdom.fna.split/ssu_all_right_kingdom.part_*.fna.txt|grep "SEQ" |grep "Class"|  cut -f1|cut -f2 -d" " >> $GTDB_loc/working_files/ssu_all_wrong_class.id
+
+cat $GTDB_loc/working_files/ssu_all_right_kingdom.fna.split/ssu_all_right_kingdom.part_*.fna.txt|grep "SEQ" |grep -c "Kingdom"
+cat $GTDB_loc/working_files/ssu_all_right_kingdom.fna.split/ssu_all_right_kingdom.part_*.fna.txt|grep "SEQ" |grep -c "Phylum"
+cat $GTDB_loc/working_files/ssu_all_right_kingdom.fna.split/ssu_all_right_kingdom.part_*.fna.txt|grep "SEQ" |grep -c "Class"
+cat $GTDB_loc/working_files/ssu_all_right_kingdom.fna.split/ssu_all_right_kingdom.part_*.fna.txt|grep "SEQ" |grep -c "Order"
+cat $GTDB_loc/working_files/ssu_all_right_kingdom.fna.split/ssu_all_right_kingdom.part_*.fna.txt|grep "SEQ" |grep -c "Family"
+cat $GTDB_loc/working_files/ssu_all_right_kingdom.fna.split/ssu_all_right_kingdom.part_*.fna.txt|grep "SEQ" |grep -c "Genus"
+cat $GTDB_loc/working_files/ssu_all_right_kingdom.fna.split/ssu_all_right_kingdom.part_*.fna.txt|grep "SEQ" |grep -c "Species"
+
+/gpfs/home/e130/seqkit/seqkit grep -r -v -f $GTDB_loc/working_files/ssu_all_wrong_class.id $GTDB_loc/working_files/ssu_all_right_kingdom.fna > $GTDB_loc/working_files/ssu_all_right_class.fna
+
+
+
+
+
+
+
+
+
