@@ -2,6 +2,8 @@ karst_LSU.fna						Sequences in Karst data that are identified as Large Subunit 
 mt_incorrect_RDP.fasta					Sequences from Midori that are not identified as mitochondrial
 plastid_uchime_high_conf_chimeras.fna			Plastid sequences in PR2 database that appear to be chimaeric
 pr2_version_5.0.0_SSU_UTAX_plastid_not_plastid.fna	Sequences labelled as plastids in PR2 database but not by Ribovore
+pr2_version_5.0.0_SSU_UTAX_eukaryota_not_eukaryota.fasta	Sequences in PR2 that are identified as not Eukaryote by Ribovore
+Silva_LSU_to_remover					Sequences in SILVA that are identifies as LSU by Ribovore
 ssu_all_apicoplast.fna					Sequences in GTDB 220 that are identified by Ribovore as apicoplasts
 ssu_all_Archaea_fail.fna				Sequences labelled as Archaea in GTDB 220 that fail Ribovore classification
 ssu_all_Archaea_good_incorrect.fna			Sequences labelled as Archaea in GTDB 220 that are identified as Bacteria by Ribovore
@@ -13,3 +15,5 @@ ssu_all_LSU.fna						Sequences in GTDB 220 that are identified by Ribovore as ap
 ssu_all_microsporidia.fna				Sequences in GTDB 220 that are identified by Ribovore as LSU seq
 ssu_all_mito.fna					Sequences in GTDB 220 that are identified by Ribovore as mitochondria
 ssu_all_NoHits.fna					Sequences in GTDB 220 that have no hits in Ribovore
+ssu_all_wrong_class.id					Identifiers of sequences in GTDB 220 that are identified as incorrectly labelled at Domain, phylum or class level in the second round of LOOT
+ssu_all_wrong_kingdom.id				Identifiers of sequences in GTDB 220 that are identified as incorrectly labelled at Domain level in the first round of LOOT
