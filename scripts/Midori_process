@@ -1,3 +1,5 @@
+set -o xtrace
+
 Midori_loc=$current"/Midori"
 echo $Midori_loc
 

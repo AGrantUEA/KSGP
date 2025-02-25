@@ -1,4 +1,4 @@
-echo $1
+
 set -o xtrace
 echo $GTDB_loc
 

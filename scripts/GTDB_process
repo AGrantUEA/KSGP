@@ -1,4 +1,4 @@
-echo $1
+
 set -o xtrace
 
 export GTDB_loc=$current"/GTDB"
