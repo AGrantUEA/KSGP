@@ -2,9 +2,9 @@
 #SBATCH --mail-type=FAIL #Mail events (NONE, BEGIN, END, FAIL, ALL)
 #SBATCH --mail-user=e130@uea.ac.uk #Where to send mail
 #SBATCH -p compute-64-512 #Which partition to use
-#SBATCH --mem=40G #Maximum memory required for job
+#SBATCH --mem=20G #Maximum memory required for job
 #SBATCH -t 128:00:00
-#SBATCH --job-name=DTDB_RT #Arbitrary name for job
+#SBATCH --job-name=GTDB_RT #Arbitrary name for job
 #SBATCH -o logs/GTDB_ribotyper-%j.out #Standard output log
 #SBATCH -e logs/GTDB_ribotyper-%j.out #Standard error log
 #SBATCH --cpus-per-task=36

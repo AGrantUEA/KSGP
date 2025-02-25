@@ -1,0 +1,36 @@
+sed 's/f__Lactariidae:mito;g__Lactarius:mito/f__Lactariidae:mito;g__Lactarius_chordata:mito/' -i $current/Midori/working_files/mt_tempfile.tax
+sed 's/f__Callichthyidae:mito;g__Dianema:mito/f__Callichthyidae:mito;g__Dianema_chordata:mito/' -i $current/Midori/working_files/mt_tempfile.tax
+sed 's/f__Turdidae:mito;g__Monticola:mito/f__Turdidae:mito;g__Monticola_chordata:mito/' -i $current/Midori/working_files/mt_tempfile.tax
+sed 's/f__Polypodiidae:mito;g__Polypodium:mito/f__Polypodiidae:mito;g__Polypodium_cnidaria:mito/' -i $current/Midori/working_files/mt_tempfile.tax
+sed 's/f__Limoniidae:mito;g__Limonia:mito/f__Limoniidae:mito;g__Limonia_arthropod:mito/' -i $current/Midori/working_files/mt_tempfile.tax
+sed 's/f__Muricidae:mito;g__Tribulus:mito/f__Muricidae:mito;g__Tribulus_mollusc:mito/' -i $current/Midori/working_files/mt_tempfile.tax
+sed 's/f__Sulidae:mito;g__Morus:mito/f__Sulidae:mito;g__Morus_chordata:mito/' -i $current/Midori/working_files/mt_tempfile.tax
+sed 's/f__Ficidae:mito;g__Ficus:mito/f__Ficidae:mito;g__Ficus_mollusc:mito/' -i $current/Midori/working_files/mt_tempfile.tax
+sed 's/f__Prunellidae:mito;g__Prunella:mito/f__Prunellidae:mito;g__Prunella_chordata:mito/' -i $current/Midori/working_files/mt_tempfile.tax
+sed 's/f__Hymenopodidae:mito;g__Hymenopus:mito/f__Hymenopodidae:mito;g__Hymenopus_arthropod:mito/' -i $current/Midori/working_files/mt_tempfile.tax
+sed 's/f__Enchytraeidae:mito;g__Fridericia:mito/f__Enchytraeidae:mito;g__Fridericia_annelid:mito/' -i $current/Midori/working_files/mt_tempfile.tax
+sed 's/f__Cuspidariidae:mito;g__Cuspidaria:mito/f__Cuspidariidae:mito;g__Cuspidaria_mollusc:mito/' -i $current/Midori/working_files/mt_tempfile.tax
+sed 's/f__Terebridae:mito;g__Myurella:mito/f__Terebridae:mito;g__Myurella_mollusc:mito/' -i $current/Midori/working_files/mt_tempfile.tax
+sed 's/f__Gomphidae:mito;g__Gomphus:mito/f__Gomphidae:mito;g__Gomphus_arthropod:mito/' -i $current/Midori/working_files/mt_tempfile.tax
+sed 's/f__Oestridae:mito;g__Hypoderma:mito/f__Oestridae:mito;g__Hypoderma_arthropod:mito/' -i $current/Midori/working_files/mt_tempfile.tax
+sed 's/f__Staphylinidae:mito;g__Oxyporus:mito/f__Staphylinidae:mito;g__Oxyporus_arthropod:mito/' -i $current/Midori/working_files/mt_tempfile.tax
+sed 's/f__Monotomidae:mito;g__Rhizophagus:mito/f__Monotomidae:mito;g__Rhizophagus_arthropod:mito/' -i $current/Midori/working_files/mt_tempfile.tax
+sed 's/f__Coccinellidae:mito;g__Olla:mito/f__Coccinellidae:mito;g__Olla_arthropod:mito/' -i $current/Midori/working_files/mt_tempfile.tax
+sed 's/f__Xanthidae:mito;g__Trichia:mito/f__Xanthidae:mito;g__Trichia_arthropod:mito/' -i $current/Midori/working_files/mt_tempfile.tax
+sed 's/f__Goniasteridae:mito;g__Peltaster:mito/f__Goniasteridae:mito;g__Peltaster_echinoderm:mito/' -i $current/Midori/working_files/mt_tempfile.tax
+sed 's/f__Carcharhinidae:mito;g__Glyphis:mito/f__Carcharhinidae:mito;g__Glyphis_chordata:mito/' -i $current/Midori/working_files/mt_tempfile.tax
+sed 's/f__Pandoridae:mito;g__Pandora:mito/f__Pandoridae:mito;g__Pandora_mollusc:mito/' -i $current/Midori/working_files/mt_tempfile.tax
+sed 's/f__Cydnidae:mito;g__Microporus:mito/f__Cydnidae:mito;g__Microporus_arthropod:mito/' -i $current/Midori/working_files/mt_tempfile.tax
+sed 's/f__Miridae:mito;g__Pilophorus:mito/f__Miridae:mito;g__Pilophorus_arthropod:mito/' -i $current/Midori/working_files/mt_tempfile.tax
+sed 's/f__Papilionidae:mito;g__Graphium:mito/f__Papilionidae:mito;g__Graphium_arthropod:mito/' -i $current/Midori/working_files/mt_tempfile.tax
+sed 's/f__Tachinidae:mito;g__Entomophaga:mito/f__Tachinidae:mito;g__Entomophaga_arthropod:mito/' -i $current/Midori/working_files/mt_tempfile.tax
+sed 's/f__Characidae:mito;g__Cynodon:mito/f__Characidae:mito;g__Cynodon_chordata:mito/' -i $current/Midori/working_files/mt_tempfile.tax
+sed 's/f__Teiidae:mito;g__Dracaena:mito/f__Teiidae:mito;g__Dracaena_chordata:mito/' -i $current/Midori/working_files/mt_tempfile.tax
+sed 's/o__Characiformes:mito;f__Chilodontidae:mito/o__Characiformes:mito;f__Chilodontidae_chordata:mito/' -i $current/Midori/working_files/mt_tempfile.tax
+sed 's/f__Scolopacidae:mito;g__Bartramia:mito/f__Scolopacidae:mito;g__Bartramia_chordata:mito/' -i $current/Midori/working_files/mt_tempfile.tax
+sed 's/f__Muscicapidae:mito;g__Oenanthe:mito/f__Muscicapidae:mito;g__Oenanthe_chordata:mito/' -i $current/Midori/working_files/mt_tempfile.tax
+sed 's/f__Plakinidae:mito;g__Corticium:mito/f__Plakinidae:mito;g__Corticium_porifera:mito/' -i $current/Midori/working_files/mt_tempfile.tax
+sed 's/f__Rondeletiidae:mito;g__Rondeletia:mito/f__Rondeletiidae:mito;g__Rondeletia_chordata:mito/' -i $current/Midori/working_files/mt_tempfile.tax
+
+
+

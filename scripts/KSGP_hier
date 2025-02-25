@@ -1,0 +1,17 @@
+set -o xtrace
+
+/gpfs/home/e130/usearch_64bit/usearch11.0.667_i86linux64 --usearch_local $current/to_annotate/raw.fasta  --db $current/final_files/GTDB_plus.fasta \
+ --id 0.75 --gapext 10I/0E --query_cov 0.25 -userfields query+target+id+alnlen+mism+opens+qlo+qhi+tlo+thi+ql -userout $current/to_annotate/raw.fasta.tax.0.blast\
+ --maxaccepts 100 --maxrejects 200 -strand both --threads 48 --notmatched $current/to_annotate/nohits
+
+/gpfs/home/e130/lotus2//bin//LCA  -i $current/to_annotate/raw.fasta.tax.0.blast -r $current/final_files/GTDB_plus.tax -o $current/to_annotate/raw.fasta.hier  -LCAfrac 0.8 -cover 0.25 -minAlignLen 70 -id 97,95,93,91,88,78,0
+
+
+grep '>' $current/to_annotate/nohits |sed 's/ .*//'> $current/to_annotate/nohits.id
+sed 's/$/\t?\t?\t?\t?\t?\t?\t?/' $current/to_annotate/nohits.id |sed 's/>//' > $current/to_annotate/nohits.hier
+cat $current/to_annotate/raw.fasta.hier $current/to_annotate/nohits.hier >tempfile.hier
+cat tempfile.hier |sed 's/__/:/g'|sed 's/\t/%k__/'|sed 's/\t/;p__/'|sed 's/\t/;c__/'|sed 's/\t/;o__/'|sed 's/\t/;f__/'|sed 's/\t/;g__/'|sed 's/\t/;s__/'|sed 's/%/\t/' |sed '1d'> $current/to_annotate/annotated_using_LCA.tax
+
+rm -f $current/to_annotate/raw.fasta.tax.0.blast
+echo "KSGP hier" >> $current/progress
+

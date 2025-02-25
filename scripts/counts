@@ -1,0 +1,50 @@
+echo "total sequences in GTDB"
+grep '>' $current/GTDB/ssu_all_r220.fna | wc -l 
+echo "GTDB sequences labelled in database as Archaea"
+grep -c 'Archaea' $current/GTDB/ssu_all_r220.fna
+echo "GTDB sequences labelled in database as Bacteria"
+grep -c 'Bacteria' $current/GTDB/ssu_all_r220.fna
+echo "Ribovore identifications"
+echo "Apicoplast"
+wc -l <$current/GTDB/working_files/GTDB_apicoplast.id
+echo "Chloroplast"
+wc -l <$current/GTDB/working_files/GTDB_Chloroplast.id
+echo "Eukaryote SSU"
+wc -l <$current/GTDB/working_files/GTDB_Eukarya.id
+echo "LSU sequences"
+wc -l <$current/GTDB/working_files/GTDB_LSU.id
+echo "Microsporidia"
+wc -l <$current/GTDB/working_files/GTDB_microsporidia.id
+echo "Mitochondria"
+wc -l <$current/GTDB/working_files/GTDB_mito.id
+echo "No Hits"
+wc -l <$current/GTDB/working_files/GTDB_NoHits.id
+echo
+echo "Final classifications after Ribovore"
+echo "Archaea"
+grep '>' $current/GTDB/working_files/ssu_all_Archaea_good_correct.fna | wc -l 
+echo "Bacteria"
+grep '>' $current/GTDB/working_files/ssu_all_Bacteria_good_correct.fna | wc -l 
+echo "Incorrectly identified bacteria"
+grep '>' $current/GTDB/working_files/ssu_all_Bacteria_good_incorrect.fna | wc -l 
+
+echo
+echo "Wrong Kingdom/Domain in LOOT stage 1"
+wc -l < $current/GTDB/working_files/ssu_all_wrong_kingdom.id
+echo "Wrong Kingdom/Domain/Phylum/Class in LOOT stage 2"
+wc -l < $current/GTDB/working_files/ssu_all_wrong_class.id
+
+echo
+echo "After cleaning and deduplication GTDB contains"
+grep -c '>' $GTDB_loc/working_files/ssu_all_right_class_dedup.fna
+
+
+echo
+echo "KSGP contains"
+grep -c '>' $current/final_files/KSGP.fasta 
+
+echo "Final counts" >> $current/progress
+
+
+
+

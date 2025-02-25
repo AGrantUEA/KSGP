@@ -1,7 +1,7 @@
 #!/bin/bash 
 #SBATCH --mail-type=FAIL #Mail events (NONE, BEGIN, END, FAIL, ALL)
 #SBATCH --mail-user=e130@uea.ac.uk #Where to send mail
-
+#SBATCH -p compute-64-512 #Which partition to use
 #SBATCH --mem=20G #Maximum memory required for job
 #SBATCH -t 128:00:00
 #SBATCH --job-name=pr2_ribo #Arbitrary name for job
@@ -16,10 +16,11 @@ module add hmmer/3.3
 
 source /gpfs/home/e130/ribovore/env_vars
 set -o xtrace
-ribotyper -f -n 16 $current/PR2/working_files/pr2_version_5.0.0_SSU_UTAX_euk.fasta $current/PR2/working_files/eukaryota_ribotyper_v2_output &
+ribotyper -f -n 16 $current/PR2/working_files/pr2_version_5.0.0_SSU_UTAX_euk.fasta $current/PR2/working_files/eukaryota_ribotyper_v2_output 
 ribotyper -f -n 16 $current/PR2/working_files/pr2_version_5.0.0_SSU_UTAX_nucleoplast.fasta $current/PR2/working_files/nucleoplast_ribotyper_v2_output
 ribotyper -f -n 16 $current/PR2/working_files/pr2_version_5.0.0_SSU_UTAX_chroplast.fasta $current/PR2/working_files/chroplast_ribotyper_v2_output
 ribotyper -f -n 16 $current/PR2/working_files/pr2_version_5.0.0_SSU_UTAX_apicoplast.fasta $current/PR2/working_files/apicoplast_ribotyper_v2_output
 ribotyper -f -n 16 $current/PR2/working_files/pr2_version_5.0.0_SSU_UTAX_plas.fasta $current/PR2/working_files/plastid_ribotyper_v2_output
 
+echo "PR2 ribovore" >> $current/progress
 

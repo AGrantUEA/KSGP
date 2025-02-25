@@ -1,0 +1,32 @@
+#!/bin/bash 
+#SBATCH --mail-type=FAIL #Mail events (NONE, BEGIN, END, FAIL, ALL)
+#SBATCH --mail-user=e130@uea.ac.uk #Where to send mail
+#SBATCH -p compute-64-512 #Which partition to use
+#SBATCH --mem=20G #Maximum memory required for job
+#SBATCH -t 128:00:00
+#SBATCH --job-name=SilvaRT #Arbitrary name for job
+#SBATCH -o logs/Silva_ribotyper-%j.out #Standard output log
+#SBATCH -e logs/Silva_ribotyper-%j.out #Standard error log
+#SBATCH --cpus-per-task=36
+#SBATCH --ntasks=1
+
+export OMP_NUM_THREADS=36
+module add python/anaconda/2020.11/3.8
+module add hmmer/3.3
+
+source /gpfs/home/e130/ribovore/env_vars
+set -o xtrace
+
+
+echo $SILVA_loc
+
+#
+
+ribotyper -f -n 36  $SILVA_loc/working_files/silva_prokaryotes.fasta $SILVA_loc/working_files/Silva_ribotyper_output
+
+#/gpfs/home/e130/seqkit/seqkit grep -r -f /gpfs/home/e130/lotus2/DB/create_v3/working_files/GDTB_Bacteria.id /gpfs/home/e130/lotus2/DB/create_final/ssu_all_r214.fna > /gpfs/home/e130/lotus2/DB/create_v3/files/ssu_all_r214_Bacteria.fna
+
+
+#cat /gpfs/home/e130/lotus2/DB/create_v3/files/ssu_all_r214_Archaea.fna /gpfs/home/e130/lotus2/DB/create_v3/files/ssu_all_r214_Bacteria.fna > /gpfs/home/e130/lotus2/DB/create_v3/files/ssu_all_r214_ribovore_Bacteria_and_Archaea.fna
+
+echo "Silva ribovore" >> $current/progress

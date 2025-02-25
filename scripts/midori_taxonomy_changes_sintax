@@ -1,0 +1,36 @@
+sed 's/f:Lactariidae:mito,g:Lactarius:mito/f:Lactariidae:mito,g:Lactarius_chordata:mito/' -i $current/Midori/working_files/mt_correct_RDP_Sintax.fasta
+sed 's/f:Callichthyidae:mito,g:Dianema:mito/f:Callichthyidae:mito,g:Dianema_chordata:mito/' -i $current/Midori/working_files/mt_correct_RDP_Sintax.fasta
+sed 's/f:Turdidae:mito,g:Monticola:mito/f:Turdidae:mito,g:Monticola_chordata:mito/' -i $current/Midori/working_files/mt_correct_RDP_Sintax.fasta
+sed 's/f:Polypodiidae:mito,g:Polypodium:mito/f:Polypodiidae:mito,g:Polypodium_cnidaria:mito/' -i $current/Midori/working_files/mt_correct_RDP_Sintax.fasta
+sed 's/f:Limoniidae:mito,g:Limonia:mito/f:Limoniidae:mito,g:Limonia_arthropod:mito/' -i $current/Midori/working_files/mt_correct_RDP_Sintax.fasta
+sed 's/f:Muricidae:mito,g:Tribulus:mito/f:Muricidae:mito,g:Tribulus_mollusc:mito/' -i $current/Midori/working_files/mt_correct_RDP_Sintax.fasta
+sed 's/f:Sulidae:mito,g:Morus:mito/f:Sulidae:mito,g:Morus_chordata:mito/' -i $current/Midori/working_files/mt_correct_RDP_Sintax.fasta
+sed 's/f:Ficidae:mito,g:Ficus:mito/f:Ficidae:mito,g:Ficus_mollusc:mito/' -i $current/Midori/working_files/mt_correct_RDP_Sintax.fasta
+sed 's/f:Prunellidae:mito,g:Prunella:mito/f:Prunellidae:mito,g:Prunella_chordata:mito/' -i $current/Midori/working_files/mt_correct_RDP_Sintax.fasta
+sed 's/f:Hymenopodidae:mito,g:Hymenopus:mito/f:Hymenopodidae:mito,g:Hymenopus_arthropod:mito/' -i $current/Midori/working_files/mt_correct_RDP_Sintax.fasta
+sed 's/f:Enchytraeidae:mito,g:Fridericia:mito/f:Enchytraeidae:mito,g:Fridericia_annelid:mito/' -i $current/Midori/working_files/mt_correct_RDP_Sintax.fasta
+sed 's/f:Cuspidariidae:mito,g:Cuspidaria:mito/f:Cuspidariidae:mito,g:Cuspidaria_mollusc:mito/' -i $current/Midori/working_files/mt_correct_RDP_Sintax.fasta
+sed 's/f:Terebridae:mito,g:Myurella:mito/f:Terebridae:mito,g:Myurella_mollusc:mito/' -i $current/Midori/working_files/mt_correct_RDP_Sintax.fasta
+sed 's/f:Gomphidae:mito,g:Gomphus:mito/f:Gomphidae:mito,g:Gomphus_arthropod:mito/' -i $current/Midori/working_files/mt_correct_RDP_Sintax.fasta
+sed 's/f:Oestridae:mito,g:Hypoderma:mito/f:Oestridae:mito,g:Hypoderma_arthropod:mito/' -i $current/Midori/working_files/mt_correct_RDP_Sintax.fasta
+sed 's/f:Staphylinidae:mito,g:Oxyporus:mito/f:Staphylinidae:mito,g:Oxyporus_arthropod:mito/' -i $current/Midori/working_files/mt_correct_RDP_Sintax.fasta
+sed 's/f:Monotomidae:mito,g:Rhizophagus:mito/f:Monotomidae:mito,g:Rhizophagus_arthropod:mito/' -i $current/Midori/working_files/mt_correct_RDP_Sintax.fasta
+sed 's/f:Coccinellidae:mito,g:Olla:mito/f:Coccinellidae:mito,g:Olla_arthropod:mito/' -i $current/Midori/working_files/mt_correct_RDP_Sintax.fasta
+sed 's/f:Xanthidae:mito,g:Trichia:mito/f:Xanthidae:mito,g:Trichia_arthropod:mito/' -i $current/Midori/working_files/mt_correct_RDP_Sintax.fasta
+sed 's/f:Goniasteridae:mito,g:Peltaster:mito/f:Goniasteridae:mito,g:Peltaster_echinoderm:mito/' -i $current/Midori/working_files/mt_correct_RDP_Sintax.fasta
+sed 's/f:Carcharhinidae:mito,g:Glyphis:mito/f:Carcharhinidae:mito,g:Glyphis_chordata:mito/' -i $current/Midori/working_files/mt_correct_RDP_Sintax.fasta
+sed 's/f:Pandoridae:mito,g:Pandora:mito/f:Pandoridae:mito,g:Pandora_mollusc:mito/' -i $current/Midori/working_files/mt_correct_RDP_Sintax.fasta
+sed 's/f:Cydnidae:mito,g:Microporus:mito/f:Cydnidae:mito,g:Microporus_arthropod:mito/' -i $current/Midori/working_files/mt_correct_RDP_Sintax.fasta
+sed 's/f:Miridae:mito,g:Pilophorus:mito/f:Miridae:mito,g:Pilophorus_arthropod:mito/' -i $current/Midori/working_files/mt_correct_RDP_Sintax.fasta
+sed 's/f:Papilionidae:mito,g:Graphium:mito/f:Papilionidae:mito,g:Graphium_arthropod:mito/' -i $current/Midori/working_files/mt_correct_RDP_Sintax.fasta
+sed 's/f:Tachinidae:mito,g:Entomophaga:mito/f:Tachinidae:mito,g:Entomophaga_arthropod:mito/' -i $current/Midori/working_files/mt_correct_RDP_Sintax.fasta
+sed 's/f:Characidae:mito,g:Cynodon:mito/f:Characidae:mito,g:Cynodon_chordata:mito/' -i $current/Midori/working_files/mt_correct_RDP_Sintax.fasta
+sed 's/f:Teiidae:mito,g:Dracaena:mito/f:Teiidae:mito,g:Dracaena_chordata:mito/' -i $current/Midori/working_files/mt_correct_RDP_Sintax.fasta
+sed 's/o:Characiformes:mito,f:Chilodontidae:mito/o:Characiformes:mito,f:Chilodontidae_chordata:mito/' -i $current/Midori/working_files/mt_correct_RDP_Sintax.fasta
+sed 's/f:Scolopacidae:mito,g:Bartramia:mito/f:Scolopacidae:mito,g:Bartramia_chordata:mito/' -i $current/Midori/working_files/mt_correct_RDP_Sintax.fasta
+sed 's/f:Muscicapidae:mito,g:Oenanthe:mito/f:Muscicapidae:mito,g:Oenanthe_chordata:mito/' -i $current/Midori/working_files/mt_correct_RDP_Sintax.fasta
+sed 's/f:Plakinidae:mito,g:Corticium:mito/f:Plakinidae:mito,g:Corticium_porifera:mito/' -i $current/Midori/working_files/mt_correct_RDP_Sintax.fasta
+sed 's/f:Rondeletiidae:mito,g:Rondeletia:mito/f:Rondeletiidae:mito,g:Rondeletia_chordata:mito/' -i $current/Midori/working_files/mt_correct_RDP_Sintax.fasta
+
+
+

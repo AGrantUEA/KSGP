@@ -1,0 +1,14 @@
+echo $1
+current=$1
+annotate_loc=$current"/annotate"
+echo $annotate_loc
+
+cd $anotate_loc
+export OMP_NUM_THREADS=36
+
+/gpfs/home/e130/usearch_64bit/usearch11.0.667_i86linux64 --usearch_local /gpfs/home/e130/KSGP/v3/to_annotate/raw.fasta  --db /gpfs/home/e130/KSGP/v3/final_files/GTDB_plus.fasta --id 0.75 --gapext 10I/0E --query_cov 0.25 -userfields query+target+id+alnlen+mism+opens+qlo+qhi+tlo+thi+ql -userout /gpfs/home/e130/KSGP/v3/to_annotate/raw.fasta.tax.0.blast --maxaccepts 100 --maxrejects 200 -strand both --threads 36 --notmatched /gpfs/home/e130/KSGP/v3/to_annotate/nohits
+
+/gpfs/home/e130/lotus2//bin//LCA  -i /gpfs/home/e130/KSGP/v3/to_annotate/raw.fasta.tax.0.blast -r /gpfs/home/e130/KSGP/v3/final_files/GTDB_plus.tax -o /gpfs/home/e130/KSGP/v3/to_annotate/raw.fasta.hier  -LCAfrac 0.8 -cover 0.25 -minAlignLen 70 -id 97,95,93,91,88,78,0
+
+grep '>' /gpfs/home/e130/KSGP/v3/to_annotate/nohits |sed 's/ .*/\tk__?;p__?;c__?;o__?;f__?;g__?;s__?/'>/gpfs/home/e130/KSGP/v3/to_annotate/lca.tax
+cat /gpfs/home/e130/KSGP/v3/to_annotate/raw.fasta.hier |sed 's/\t/%k__/'|sed 's/\t/;p__/'|sed 's/\t/;c__/'|sed 's/\t/;o__/'|sed 's/\t/;f__/'|sed 's/\t/;g__/'|sed 's/\t/;s__/'|sed's/%/\t/' | >>lca.tax

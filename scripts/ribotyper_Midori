@@ -1,0 +1,22 @@
+#!/bin/bash 
+#SBATCH --mail-type=FAIL #Mail events (NONE, BEGIN, END, FAIL, ALL)
+#SBATCH --mail-user=e130@uea.ac.uk #Where to send mail
+#SBATCH -p compute-64-512 #Which partition to use
+#SBATCH --mem=40G #Maximum memory required for job
+#SBATCH -t 128:00:00
+#SBATCH --job-name=DTDB_RT #Arbitrary name for job
+#SBATCH -o logs/Midori_ribotyper-%j.out #Standard output log
+#SBATCH -e logs/Midori_ribotyper-%j.out #Standard error log
+#SBATCH --cpus-per-task=18
+#SBATCH --ntasks=1
+
+export OMP_NUM_THREADS=18
+module add python/anaconda/2020.11/3.8
+module add hmmer/3.3
+
+source /gpfs/home/e130/ribovore/env_vars
+set -o xtrace
+
+
+
+ribotyper -f -n 18  /gpfs/home/e130/KSGP/v3/Midori/MIDORI2_LONGEST_NUC_GB261_srRNA_RDP.fasta /gpfs/home/e130/KSGP/v3/Midori/working_files/Midori_ribotyper_output

@@ -1,0 +1,59 @@
+export OMP_NUM_THREADS=24
+
+
+if ! [ -e $current/final_files ]
+then
+    mkdir $current/final_files
+fi
+
+
+
+if ! [ -e $current/final_files/extra ]
+then
+    mkdir $current/final_files/extra
+fi
+
+
+/gpfs/home/e130/usearch_64bit/usearch11.0.667_i86linux64 -cluster_fast $current/final_files/KSGP.fasta \
+ -id 0.985 -sort length -uc $current/final_files/extra/KSGP_species.uc -threads 48\
+ -centroids $current/final_files/extra/KSGP_species.fasta
+
+/gpfs/home/e130/usearch_64bit/usearch11.0.667_i86linux64 -cluster_fast $current/final_files/extra/KSGP_species.fasta \
+ -id 0.975 -sort length -uc $current/final_files/extra/KSGP_genus.uc -threads 48\
+ -centroids $current/final_files/extra/KSGP_genus.fasta
+
+/gpfs/home/e130/usearch_64bit/usearch11.0.667_i86linux64 -cluster_fast $current/final_files/extra/KSGP_genus.fasta \
+ -id 0.965 -sort length -uc $current/final_files/extra/KSGP_family.uc -threads 48\
+ -centroids $current/final_files/extra/KSGP_family.fasta
+
+/gpfs/home/e130/usearch_64bit/usearch11.0.667_i86linux64 -cluster_fast $current/final_files/extra/KSGP_family.fasta \
+ -id 0.955 -sort length -uc $current/final_files/extra/KSGP_order.uc -threads 48\
+ -centroids $current/final_files/extra/KSGP_order.fasta
+
+/gpfs/home/e130/usearch_64bit/usearch11.0.667_i86linux64 -cluster_fast $current/final_files/extra/KSGP_order.fasta \
+ -id 0.94 -sort length -uc $current/final_files/extra/KSGP_class.uc -threads 48\
+ -centroids $current/final_files/extra/KSGP_class.fasta
+
+
+/gpfs/home/e130/usearch_64bit/usearch11.0.667_i86linux64 -cluster_fast $current/final_files/extra/KSGP_class.fasta \
+ -id 0.89 -sort length -uc $current/final_files/extra/KSGP_phylum.uc -threads 48\
+ -centroids $current/final_files/extra/KSGP_phylum.fasta
+
+
+
+/gpfs/home/e130/usearch_64bit/usearch11.0.667_i86linux64 -cluster_fast $current/final_files/extra/KSGP_phylum.fasta \
+ -id 0.875 -sort length -uc $current/final_files/extra/KSGP_kingdom.uc -threads 48\
+ -centroids $current/final_files/extra/KSGP_kingdom.fasta
+
+echo "cluster KSGP" >> $current/progress
+
+
+cat $current/final_files/extra/KSGP_species.uc |sed 's/#/%/g' |sed 's/|/{/g' |sed 's/ /}/' > $current/final_files/extra/KSGP_species2.uc
+cat $current/final_files/extra/KSGP_genus.uc |sed 's/#/%/g' |sed 's/|/{/g' |sed 's/ /}/' > $current/final_files/extra/KSGP_genus2.uc
+cat $current/final_files/extra/KSGP_family.uc |sed 's/#/%/g' |sed 's/|/{/g' |sed 's/ /}/' > $current/final_files/extra/KSGP_family2.uc
+cat $current/final_files/extra/KSGP_order.uc |sed 's/#/%/g' |sed 's/|/{/g' |sed 's/ /}/' > $current/final_files/extra/KSGP_order2.uc
+cat $current/final_files/extra/KSGP_class.uc |sed 's/#/%/g' |sed 's/|/{/g' |sed 's/ /}/' > $current/final_files/extra/KSGP_class2.uc
+cat $current/final_files/extra/KSGP_phylum.uc |sed 's/#/%/g' |sed 's/|/{/g' |sed 's/ /}/' > $current/final_files/extra/KSGP_phylum2.uc
+cat $current/final_files/extra/KSGP_kingdom.uc |sed 's/#/%/g' |sed 's/|/{/g' |sed 's/ /}/' > $current/final_files/extra/KSGP_kingdom2.uc
+
+

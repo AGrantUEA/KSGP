@@ -1,7 +1,5 @@
 echo $1
 set -o xtrace
-
-export GTDB_loc=$current"/GTDB"
 echo $GTDB_loc
 
 cd $GTDB_loc
@@ -25,17 +23,13 @@ cd ..
 cd ..
 #run ribotyper
 
-sbatch --export=ALL ribotyper_GTDB
+sbatch --export=ALL /gpfs/home/e130/KSGP/ribotyper_GTDB
 
 
 while [ $(squeue -u e130 |grep 'GTDB_RT'|wc -l) != 0 ]
 do
- sleep 10m
-
-
+ sleep 20m
 done
-
-squeue -u e130
 
 grep -v 'SSU.Bacteria' $GTDB_loc/working_files/GTDB_ribotyper_output/GTDB_ribotyper_output.ribotyper.short.out |grep -v 'SSU.Archaea' > $GTDB_loc/final_files/GTDB_SSU_rejected_by_ribotyper
 
@@ -139,88 +133,4 @@ grep -c '>' $GTDB_loc"/working_files/ssu_all_Bacteria_good.fna"
 grep -c '>' $GTDB_loc"/working_files/ssu_all_Bacteria_good_correct.fna"
 grep -c '>' $GTDB_loc"/working_files/ssu_all_Bacteria_good_labelled_archaea.fna"
 
-#set up and run loot
-
-#need to replace first whitespace with$ to avoid header being stripped out
-#edit original headers for RDP
-
-sed 's/ /%/'  $GTDB_loc"/working_files/ssu_all_ribovore_Bacteria_and_Archaea.fna" | sed 's/%/\tRoot;/'  |sed 's/.__//g' >  $GTDB_loc"/working_files/ssu_all_ribovore_Bacteria_and_Archaea_RDP.fna"
-
-
-#set up tax file for LOOT
-cat /gpfs/home/e130/KSGP/taxheader > $GTDB_loc"/working_files/ssu_all_ribovore_RDP.tax"
-grep '>' $GTDB_loc"/working_files/ssu_all_ribovore_Bacteria_and_Archaea_RDP.fna" |sed 's/>//'  |sed 's/;/\t/g'|sed 's/Root\t//'>>$GTDB_loc"/working_files/ssu_all_ribovore_RDP.tax"
-
-
-python /gpfs/home/e130/RDPTools/lineage2taxTrain.py $GTDB_loc"/working_files/ssu_all_ribovore_RDP.tax"> $GTDB_loc"/working_files/ssu_all_ribovore_RDP.txt" 
-
-#split file and run LOOT
-
-
-cd $GTDB_loc"/working_files"
-/gpfs/home/e130/seqkit/seqkit split -s 10000 --force $GTDB_loc"/working_files/ssu_all_ribovore_Bacteria_and_Archaea_RDP.fna"
-
-cd $root
-
-for OUTPUT in $(ls $GTDB_loc/working_files/ssu_all_ribovore_Bacteria_and_Archaea_RDP.fna.split/*.fna)
-do
-echo $OUTPUT
-#sed "s%filename%$OUTPUT%g"  loot_batch >loot_batch2
-sbatch --export=ALL loot_batch
-done
-
-sleep 8h
-squeue -u e130
-
-#set up second round of loot
-
-cat $GTDB_loc/working_files/ssu_all_ribovore_Bacteria_and_Archaea_RDP.fna.split/ssu_all_ribovore_Bacteria_and_Archaea_RDP.part_*.fna.txt|grep "SEQ" |grep "Kingdom"|  cut -f1|cut -f2 -d" " > $GTDB_loc/working_files/ssu_all_wrong_kingdom.id
-
-/gpfs/home/e130/seqkit/seqkit grep -r --threads 48 -v -f $GTDB_loc/working_files/ssu_all_wrong_kingdom.id $GTDB_loc/working_files/ssu_all_ribovore_Bacteria_and_Archaea_RDP.fna  |/gpfs/home/e130/seqkit/seqkit seq -m 200 > $GTDB_loc/working_files/ssu_all_right_kingdom.fna
-
-/gpfs/home/e130/seqkit/seqkit split -s 10000 $GTDB_loc/working_files/ssu_all_right_kingdom.fna
-
-
-
-#set up tax file for LOOT
-cat  /gpfs/home/e130/KSGP/taxheader  > $GTDB_loc"/working_files/ssu_all_ribovore_RDP2.tax"
-grep '>' $GTDB_loc/working_files/ssu_all_right_kingdom.fna |sed 's/>//'  |sed 's/;/\t/g' |sed 's/Root\t//' >> $GTDB_loc"/working_files/ssu_all_ribovore_RDP2.tax"
-
-
-python /gpfs/home/e130/RDPTools/lineage2taxTrain.py $GTDB_loc"/working_files/ssu_all_ribovore_RDP2.tax"> $GTDB_loc"/working_files/ssu_all_ribovore_RDP2.txt"
-
-cd $root
-
-for OUTPUT in $(ls $GTDB_loc/working_files/ssu_all_right_kingdom.fna.split/*.fna)
-do
-echo $OUTPUT
-#sed "s%filename%$OUTPUT%g"  loot_batch_p >loot_batch_p2
-sbatch --export=ALL  loot_batch_p
-done
-
-sleep 8h
-squeue -u e130
-
-cat $GTDB_loc/working_files/ssu_all_right_kingdom.fna.split/ssu_all_right_kingdom.part_*.fna.txt|grep "SEQ" |grep "Kingdom"|  cut -f1|cut -f2 -d" " > $GTDB_loc/working_files/ssu_all_wrong_class.id
-cat $GTDB_loc/working_files/ssu_all_right_kingdom.fna.split/ssu_all_right_kingdom.part_*.fna.txt|grep "SEQ" |grep "Phylum"|  cut -f1|cut -f2 -d" " >> $GTDB_loc/working_files/ssu_all_wrong_class.id
-cat $GTDB_loc/working_files/ssu_all_right_kingdom.fna.split/ssu_all_right_kingdom.part_*.fna.txt|grep "SEQ" |grep "Class"|  cut -f1|cut -f2 -d" " >> $GTDB_loc/working_files/ssu_all_wrong_class.id
-
-cat $GTDB_loc/working_files/ssu_all_right_kingdom.fna.split/ssu_all_right_kingdom.part_*.fna.txt|grep "SEQ" |grep -c "Kingdom"
-cat $GTDB_loc/working_files/ssu_all_right_kingdom.fna.split/ssu_all_right_kingdom.part_*.fna.txt|grep "SEQ" |grep -c "Phylum"
-cat $GTDB_loc/working_files/ssu_all_right_kingdom.fna.split/ssu_all_right_kingdom.part_*.fna.txt|grep "SEQ" |grep -c "Class"
-cat $GTDB_loc/working_files/ssu_all_right_kingdom.fna.split/ssu_all_right_kingdom.part_*.fna.txt|grep "SEQ" |grep -c "Order"
-cat $GTDB_loc/working_files/ssu_all_right_kingdom.fna.split/ssu_all_right_kingdom.part_*.fna.txt|grep "SEQ" |grep -c "Family"
-cat $GTDB_loc/working_files/ssu_all_right_kingdom.fna.split/ssu_all_right_kingdom.part_*.fna.txt|grep "SEQ" |grep -c "Genus"
-cat $GTDB_loc/working_files/ssu_all_right_kingdom.fna.split/ssu_all_right_kingdom.part_*.fna.txt|grep "SEQ" |grep -c "Species"
-
-/gpfs/home/e130/seqkit/seqkit grep -r -v -f $GTDB_loc/working_files/ssu_all_wrong_class.id $GTDB_loc/working_files/ssu_all_right_kingdom.fna > $GTDB_loc/working_files/ssu_all_right_class.fna
-
-
-echo "GTDB Process" >> $current/progress
-
-
-
-
-
-
-
+echo "GTDB Ribovore" >> $current/progress

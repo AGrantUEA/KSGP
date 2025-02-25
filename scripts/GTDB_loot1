@@ -1,0 +1,43 @@
+
+set -o xtrace
+#set up and run loot
+
+#need to replace first whitespace with$ to avoid header being stripped out
+#edit original headers for RDP
+
+sed 's/ /%/'  $GTDB_loc"/working_files/ssu_all_ribovore_Bacteria_and_Archaea.fna" | sed 's/%/\tRoot;/'  |sed 's/.__//g' >  $GTDB_loc"/working_files/ssu_all_ribovore_Bacteria_and_Archaea_RDP.fna"
+
+
+#set up tax file for LOOT
+cat /gpfs/home/e130/KSGP/taxheader > $GTDB_loc"/working_files/ssu_all_ribovore_RDP.tax"
+grep '>' $GTDB_loc"/working_files/ssu_all_ribovore_Bacteria_and_Archaea_RDP.fna" |sed 's/>//'  |sed 's/;/\t/g'|sed 's/Root\t//'>>$GTDB_loc"/working_files/ssu_all_ribovore_RDP.tax"
+
+
+python /gpfs/home/e130/RDPTools/lineage2taxTrain.py $GTDB_loc"/working_files/ssu_all_ribovore_RDP.tax"> $GTDB_loc"/working_files/ssu_all_ribovore_RDP.txt" 
+
+#split file and run LOOT
+
+
+cd $GTDB_loc"/working_files"
+/gpfs/home/e130/seqkit/seqkit split -s 10000 --force $GTDB_loc"/working_files/ssu_all_ribovore_Bacteria_and_Archaea_RDP.fna"
+
+cd $root
+
+for OUTPUT in $(ls $GTDB_loc/working_files/ssu_all_ribovore_Bacteria_and_Archaea_RDP.fna.split/*.fna)
+do
+echo $OUTPUT
+sed "s%filename%$OUTPUT%g"   $scripts/loot_batch >loot_batch2
+sbatch --export=ALL loot_batch2
+done
+
+while [ $(squeue -u e130 |grep 'loot1'|wc -l) != 0 ]
+do
+ sleep 60m
+done
+
+echo "GTDB loot" >> $current/progress
+
+
+
+
+

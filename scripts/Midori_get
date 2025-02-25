@@ -9,5 +9,7 @@ cd $Midori_loc
 wget $Midori_source -o wget.log
 gunzip *.gz
 ls
-cd ..
-cd ..
+cd $root
+
+echo "Midori get" >> $current/progress
+

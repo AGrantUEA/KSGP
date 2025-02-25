@@ -1,5 +1,3 @@
-echo $1
-current=$1
 Midori_loc=$current"/Midori"
 echo $Midori_loc
 
@@ -19,6 +17,21 @@ grep -v "SSU.Mito" $current/Midori/working_files/Midori_ribotyper_output/Midori_
 
 
 /gpfs/home/e130/seqkit/seqkit grep -r -f  $Midori_loc"/working_files/Midori_SSU_mitochondria.id" $current/Midori/MIDORI2_LONGEST_NUC_GB261_srRNA_RDP.fasta| sed 's/.</./'| sed 's/.>/./'|sed 's/_[0-9]\+/:mito/g'|sed 's/family_//'|sed 's/order_//'|sed 's/class_//'> $current/Midori/working_files/mt_correct_RDP.fasta
+
+
+/gpfs/home/e130/seqkit/seqkit grep -r -v -f  $Midori_loc"/working_files/Midori_SSU_mitochondria.id" $current/Midori/MIDORI2_LONGEST_NUC_GB261_srRNA_RDP.fasta| sed 's/.</./'| sed 's/.>/./'|sed 's/_[0-9]\+/:mito/g'|sed 's/family_//'|sed 's/order_//'|sed 's/class_//'> $current/Midori/working_files/mt_incorrect_RDP.fasta
+
+
+#make final changes to Midori
+RDPmidori2Lotus2 $current/Midori/working_files/mt_correct_RDP.fasta $current/Midori/working_files/mt_tempfile
+RDPmidori2Sintax $current/Midori/working_files/mt_correct_RDP.fasta $current/Midori/working_files/mt_correct_RDP_Sintax.fasta 
+#change taxonomy to deal with cases where genus name is used in different kingdoms
+midori_taxonomy_changes_tax
+midori_taxonomy_changes_sintax
+
+
+echo "Midori process" >> $current/progress
+
 
 
 

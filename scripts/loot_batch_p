@@ -2,24 +2,24 @@
 #SBATCH --mail-type=END,FAIL #Mail events (NONE, BEGIN, END, FAIL, ALL)
 #SBATCH --mail-user=e130@uea.ac.uk #Where to send mail
 #SBATCH --mem=15G #Maximum memory required for job
-
+#SBATCH -p compute-64-512 #Which partition to use
 #SBATCH -t 128:00:00
-#SBATCH --job-name=RDP_p #Arbitrary name for job
-#SBATCH -o logs/RDP_p-%j.out #Standard output log
-#SBATCH -e logs/RDP_p-%j.out #Standard error log
-#SBATCH --cpus-per-task=8
+#SBATCH --job-name=loot2 #Arbitrary name for job
+#SBATCH -o logs/loot2-%j.out #Standard output log
+#SBATCH -e logs/loot2-%j.out #Standard error log
+#SBATCH --cpus-per-task=1
 #SBATCH --ntasks=1
-export OMP_NUM_THREADS=8
+export OMP_NUM_THREADS=1
 
 pwd
 
 
 set -o xtrace
-current=$root$version
-
-GTDB_loc=$current"/GTDB"
 
 
-java -Xmx128g  -jar /gpfs/home/e130/RDPTools/classifier.jar loot -q $OUTPUT -t $GTDB_loc"/working_files/ssu_all_ribovore_RDP2.txt" -s $GTDB_loc"/working_files/ssu_all_right_kingdom.fna" -l 200 -o $OUTPUT.txt 
+
+echo $OUTPUT
+
+java -Xmx128g  -jar /gpfs/home/e130/RDPTools/classifier.jar loot -q filename -t $GTDB_loc"/working_files/ssu_all_ribovore_RDP2.txt" -s $GTDB_loc"/working_files/ssu_all_right_kingdom.fna" -l 200 -o filename.txt 
 #java -Xmx128g  -jar /gpfs/home/e130/RDPTools/classifier.jar loot -q $file.fna -t /gpfs/home/e130/lotus2/DB/create_final/ssu_all_r214_domain_errors_removed_dedup_RDP.txt -s /gpfs/home/e130/lotus2/DB/create_v3/files/ssu_all_r214_ribovore_Bacteria_and_Archaea_RDP2.fna -l 400 -o $file.txt 
 

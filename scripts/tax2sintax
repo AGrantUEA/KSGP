@@ -1,0 +1,5 @@
+intax=$1".tax"
+infasta=$1".fasta"
+out=$1"_sintax.fasta"
+echo "convert" $1 "fasta and tax files into sintax file:"
+echo $out

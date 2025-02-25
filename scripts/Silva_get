@@ -1,0 +1,15 @@
+set -o xtrace
+
+
+echo $SILVA_loc
+
+SILVA_source="https://www.arb-silva.de/fileadmin/silva_databases/current/Exports/SILVA_138.2_SSURef_NR99_tax_silva.fasta.gz"
+echo $SILVA_source
+cd $SILVA_loc
+wget $SILVA_source  -o wget.log
+gunzip *.gz
+#Convert to DNA
+#extract bacteria and archaea
+cd ..
+
+echo "Silva get" >> $current/progress

@@ -2,7 +2,7 @@
 #SBATCH --mail-type=FAIL #Mail events (NONE, BEGIN, END, FAIL, ALL)
 #SBATCH --mail-user=e130@uea.ac.uk #Where to send mail
 #SBATCH -p compute-64-512 #Which partition to use
-#SBATCH --mem=20G #Maximum memory required for job
+#SBATCH --mem=30G #Maximum memory required for job
 #SBATCH -t 128:00:00
 #SBATCH --job-name=karst_ribo #Arbitrary name for job
 #SBATCH -o logs/karst_ribotyper-%j.out #Standard output log
@@ -17,4 +17,6 @@ module add hmmer/3.3
 source /gpfs/home/e130/ribovore/env_vars
 set -o xtrace
 
-ribotyper -f -n 16 $karst $karst_loc/working_files/Karst_ribotyper_output
+ribotyper -f -n 36 $karst $karst_loc/working_files/Karst_ribotyper_output
+
+echo "Karst Ribovore" >> $current/progress

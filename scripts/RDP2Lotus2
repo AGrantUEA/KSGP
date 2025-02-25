@@ -1,0 +1,3 @@
+echo "convert RDP format file" $1 "to Lotus2 .fasta and .tax files " $2
+cat $1 | sed 's/\t.*//'  > $2".fasta"
+grep '>' $1|sed 's/>//'|sed 's/Root;/k__/' |sed 's/;/%p__/'|sed 's/;/%c__/'|sed 's/;/%o__/'|sed 's/;/%f__/'|sed 's/;/%g__/'|sed 's/;/%s__/' |sed 's/%/;/g' >$2".tax"

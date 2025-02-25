@@ -1,0 +1,25 @@
+set -o xtrace
+echo $SILVA_loc
+
+#Convert to DNA
+#extract bacteria and archaea
+/gpfs/home/e130/seqkit/seqkit seq --rna2dna $SILVA_loc/SILVA_138.2_SSURef_NR99_tax_silva.fasta | /gpfs/home/e130/seqkit/seqkit grep -n -r -p Eukary |sed 's/\t.*//'> $SILVA_loc/working_files/silva_eukaryotes.fasta
+/gpfs/home/e130/seqkit/seqkit seq --rna2dna $SILVA_loc/SILVA_138.2_SSURef_NR99_tax_silva.fasta | /gpfs/home/e130/seqkit/seqkit grep -n -r -f  /gpfs/home/e130/KSGP/to_extract |sed 's/ .*//'> $SILVA_loc/working_files/silva_prokaryotes.fasta
+cd $root
+sbatch --export=ALL  $scripts/ribotyper_silva
+
+while [ $(squeue -u e130 |grep 'SilvaRT'|wc -l) != 0 ]
+do
+ sleep 20m
+done
+
+
+
+
+
+grep 'LSU.Bacteria' $SILVA_loc/working_files/Silva_ribotyper_output/Silva_ribotyper_output.ribotyper.short.out >$SILVA_loc/working_files/LSU_to_remove
+
+grep 'LSU.Bacteria' $SILVA_loc/working_files/Silva_ribotyper_output/Silva_ribotyper_output.ribotyper.short.out | tr -s ' '  | cut -d ' ' -f2 >$SILVA_loc/working_files/LSU.id
+/gpfs/home/e130/seqkit/seqkit grep -r -v -f $SILVA_loc/working_files/LSU.id $SILVA_loc/working_files/silva_prokaryotes.fasta > $SILVA_loc/silva_prokaryotes_cleaned.fasta
+
+echo "Silva Process" >> $current/progress

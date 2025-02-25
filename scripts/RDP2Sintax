@@ -1,0 +1,3 @@
+echo "convert RDP format file" $1 "to sintax file" $2
+
+cat $1|sed 's/\tRoot;/£tax=k:/' |sed 's/;/%p:/'|sed 's/;/%c:/'|sed 's/;/%o:/'|sed 's/;/%f:/'|sed 's/;/%g:/'|sed 's/;/%s:/' |sed 's/%/,/g' |sed 's/£/;/' >$2

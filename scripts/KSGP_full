@@ -1,0 +1,270 @@
+set -o xtrace
+echo "list of tasks completed" > $current/progress
+#script to create KSGP
+
+if ! [ -e $current ]
+then
+    mkdir $current
+fi
+
+if ! [ -e $current/to_annotate ]
+then
+    mkdir $current/to_annotate
+fi
+
+
+if ! [ -e $current/Silva ]
+then
+    mkdir $current/Silva
+fi
+
+if ! [ -e $current/Silva/working_files ]
+then
+    mkdir $current/Silva/working_files
+fi
+
+
+
+if ! [ -e $current/GTDB ]
+then
+    mkdir $current/GTDB
+fi
+
+if ! [ -e $current/GTDB/working_files ]
+then
+    mkdir $current/GTDB/working_files
+fi
+
+if ! [ -e $current/PR2 ]
+then
+    mkdir $current/PR2
+fi
+
+if ! [ -e $current/PR2/working_files ]
+then
+    mkdir $current/PR2/working_files
+fi
+
+if ! [ -e $current/Midori ]
+then
+    mkdir $current/Midori
+fi
+
+if ! [ -e $current/Midori/working_files ]
+then
+    mkdir $current/Midori/working_files
+fi
+
+if ! [ -e $current/final_files ]
+then
+    mkdir $current/final_files
+fi
+
+if ! [ -e $current/ncbi ]
+then
+    mkdir $current/ncbi
+fi
+
+if ! [ -e $current/Karst ]
+then
+    mkdir $current/Karst
+fi
+
+if ! [ -e $current/Karst/working_files ]
+then
+    mkdir $current/Karst/working_files
+fi
+
+#get and process sequences from Silva
+#set silvarun to 0 when SILVA hasn't changed
+echo $silvaget
+if [ $silvaget != 0 ]
+then
+
+Silva_get
+
+fi
+if [ $silvarun != 0 ]
+then
+
+SILVA_process &
+
+fi
+
+#get and process sequences from PR2
+#set PR2run to 0 when PR2 hasn't changed
+echo $PR2run
+if [ $PR2run != 0 ]
+then
+PR2_get 
+PR2_process &
+fi
+
+#process and cluster Karst sequences
+#commented out when PR2 hasn't changed
+
+if [ $karstrun != 0 ]
+then
+
+karst_process &
+fi
+
+#get and process sequences from Midori2
+#commented out when Midori2 hasn't changed
+
+if [ $midorirun != 0 ]
+then
+
+Midori_get
+Midori_process &
+
+
+fi
+
+#get and processes GTDB sequences
+#commented out when GTDB hasn't changed
+
+if [ $GTDBgetrun != 0 ]
+then
+
+GTDB_get 
+fi
+
+
+if [ $GTDBribovorerun != 0 ]
+then
+
+GTDB_ribovore
+fi 
+
+
+if [ $loot1run != 0 ]
+then
+
+GTDB_loot1
+fi
+
+if [ $loot2run != 0 ]
+then
+
+GTDB_loot2
+fi
+
+if [ $deduprun != 0 ]
+then
+GTDB_dedup
+fi
+
+
+if [ $GTDBconstruct != 0 ]
+then
+
+GTDB_cleaned_RDP=$current/GTDB/working_files/ssu_all_right_class_dedup.fna
+RDP2Lotus2 $GTDB_cleaned_RDP $current/final_files/GTDB_cleaned
+RDP2Sintax $GTDB_cleaned_RDP $current/final_files/GTDB_sintax.fna
+
+
+#recombine components of PR2
+cat $current/PR2/working_files/pr2_version_5.0.0_SSU_UTAX_eukaryota_cleaned.fasta \
+    $current/PR2/working_files/pr2_version_5.0.0_SSU_UTAX_nucleoplast.fasta\
+    $current/PR2/working_files/pr2_version_5.0.0_SSU_UTAX_apicoplast.fasta\
+     |sed 's/,p:/-/'|sed 's/,d:/,p:/'\
+       >tempfile
+cat  $current/PR2/working_files/pr2_version_5.0.0_SSU_UTAX_plas_no_chimeras.fasta |sed 's/k:Eukaryota.*plas,o:/k:Bacteria,p:Cyanobacteria,c:chloroplast,o:/'|sed 's/:plas/_plas/g' >>tempfile
+cat  $current/PR2/working_files/pr2_version_5.0.0_SSU_UTAX_chroplast.fasta >> tempfile
+#cat tempfile >> $current/final_files/GTDB_plus_sintax.fna
+sed 's/;tax=.*//' tempfile > PR2_temp.fasta
+grep '>' tempfile |sed 's/>//'|sed 's/;tax=/\t/'|sed 's/:/__/g'|sed 's/,/;/g' > PR2_temp.tax
+
+
+#combine component parts of GTDB+
+
+cat $current/Midori/working_files/mt_tempfile.fasta \
+    $current/final_files/GTDB_cleaned.fasta \
+    PR2_temp.fasta\
+       >$current/final_files/GTDB_plus.fasta
+cat $current/Midori/working_files/mt_tempfile.tax \
+    $current/final_files/GTDB_cleaned.tax \
+    PR2_temp.tax \
+        >$current/final_files/GTDB_plus.tax
+
+cat  $current/final_files/GTDB_sintax.fna\
+     $current/Midori/working_files/mt_correct_RDP_Sintax.fasta \
+    tempfile\
+    > $current/final_files/GTDB_plus_sintax.fna
+
+
+rm -f tempfile
+rm -f mt_tempfile.fasta
+rm -f mt_tempfile.tax
+echo "GTDB plus constructed" >> $current/progress
+fi
+
+
+if [ $KSGPconstruct != 0 ]
+then
+
+#create fasta file to annotate and KSGP fasta
+
+#get files to be used for sequences not annotations
+
+cd $current/ncbi/
+wget https://ftp.ncbi.nlm.nih.gov/refseq/TargetedLoci/Archaea/archaea.16SrRNA.fna.gz -o wget.log
+wget https://ftp.ncbi.nlm.nih.gov/refseq/TargetedLoci/Bacteria/bacteria.16SrRNA.fna.gz -o wget.log
+gunzip archaea.16SrRNA.fna.gz
+gunzip bacteria.16SrRNA.fna.gz
+cat archaea.16SrRNA.fna bacteria.16SrRNA.fna |sed 's/ .*//'> $current/to_annotate/raw.fasta
+
+#determine ids to remove these from Silva
+grep '>' $current/to_annotate/raw.fasta |sed 's/>//' > prokaryote.ids
+
+cd $root
+
+Refseq_archaea="$current/ncbi/archaea.16SrRNA.fna"
+Refseq_bacteria="$current/ncbi/bacteria.16SrRNA.fna"
+SILVA=$current/Silva/silva_prokaryotes_cleaned.fasta
+Karst_cleaned=$current/Karst/working_files/karst_ssu_clus_id.fna
+
+to_annotate="$current/to_annotate/raw"
+#cat $GTDB_cleaned".fasta" $PR2_cleaned".fasta" $Midori_cleaned".fasta" > "GTDB_plus_"$version".fasta"
+#cat $GTDB_cleaned".tax" $PR2_cleaned".tax" $Midori_cleaned".tax" > "GTDB_plus_"$version".tax"
+cat $Refseq_archaea $Refseq_bacteria |sed 's/ .*//'> $current/ncbi/prokaryote_id.fna
+cat $Karst_cleaned $SILVA $current/ncbi/prokaryote_id.fna> $to_annotate".fasta"
+cat $current/final_files/GTDB_plus.fasta $to_annotate".fasta" > $current/final_files/KSGP.fasta
+echo "KSGP fastafile" >> $current/progress
+fi
+
+if [ $KSGPsintax != 0 ]
+then
+
+
+/gpfs/home/e130/usearch_64bit/usearch11.0.667_i86linux64 -sintax $current/to_annotate/raw.fasta -db $current/final_files/GTDB_plus_sintax.fna -strand both -sintax_cutoff 0.8 -threads 48 -tabbedout $current/to_annotate/raw.sintax
+sintaxout2tax $current/to_annotate/raw.sintax $current/final_files/annotated_using_sintax.tax
+
+
+cat $current/final_files/annotated_using_sintax.tax $current/final_files/GTDB_plus.tax > $current/final_files/KSGP.tax
+cat $current/final_files/GTDB_plus.fasta $current/to_annotate/raw.fasta > $current/final_files/KSGP.fasta
+echo "KSGP sintax" >> $current/progress
+fi
+
+if [ $KSGPplus != 0 ]
+then
+
+cluster_KSGP
+KSGP_hier
+
+cat $current/to_annotate/raw.fasta.hier $current/to_annotate/nohits.hier > $current/to_annotate/raw.fasta2.hier 
+
+module add R
+cd $current
+Rscript  /gpfs/home/e130/KSGP/process_clusters
+cd ..
+echo "Process clusters" >> $current/progress
+
+sed -i 's/;/\t/' $current/final_files/lca_plus_tax.txt
+cat $current/final_files/lca_plus_tax.txt $current/final_files/GTDB_plus.tax > $current/final_files/KSGP_plus.tax
+cat $current/to_annotate/annotated_using_LCA.tax $current/final_files/GTDB_plus.tax > $current/final_files/KSGP_lca.tax
+echo "KSGP plus and LCA" >> $current/progress
+fi
+
+counts

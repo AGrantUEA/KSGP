@@ -1,0 +1,39 @@
+cut -f 1,4|sed 's/\t$/\tk:?/'|sed 's/ /_/'|sed 's/,/; /g'|sed 's/:/__/g'> o0
+
+
+
+cat  o0 |grep 'p__'  >  o1
+cat  o0 |grep 'p__' -v |sed 's/$/; p__?; c__?; o__?; f__?; g__?; s__?/' >>  o1
+
+
+
+# |sed 's/_/-/g' |sed 's/\t$/\tk:?/'|sed 's/ /_/'|sed 's/,/; /g'|sed 's/; /,/'|sed 's/:/__/g'|sed 's/__/:/' |sed 's/d__Bact/k__Bact/' |sed 's/d__Arch/k__Arch/'> o0
+
+
+
+#cat  o0 |grep 'p__'  |sed 's/d__[A-Za-z_]*;//'|sed 's/; k__Archaeplastida__plas//'|sed 's/; k__Archaeplastida//'>  o1
+#cat  o0 |grep 'p__' -v |sed 's/; d__[A-Za-z_]*$//'|sed 's/; k__Archaeplastida__plas//'|sed 's/; k__Archaeplastida//'|sed 's/$/; p__?; c__?; o__?; f__?; g__?; s__?/' >>  o1
+
+grep 'c__'  o1>  o2
+grep 'c__' -v  o1 |sed 's/$/; c__?; o__?; f__?; g__?; s__?/' >>  o2
+
+grep 'o__' o2 > o3
+grep 'o__' -v o2  |sed 's/$/; o__?; f__?; g__?; s__?/' >> o3
+
+grep 'f__' o3  > o4
+grep 'f__' -v o3  |sed 's/$/; f__?; g__?; s__?/' >> o4
+
+grep 'g__' o4  > o5
+grep 'g__' -v o4  |sed 's/$/; g__?; s__?/' >> o5
+
+grep '; s__' o5  > o6
+grep '; s__' -v o5 |sed 's/$/; s__?/' >> o6
+
+sed 's/;;/;/' o6  | sed 's/  / /g'  >$1".tax"
+
+rm -f o2
+rm -f o3
+rm -f o4
+rm -f o5
+rm -f o6
+

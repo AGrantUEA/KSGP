@@ -1,0 +1,12 @@
+
+set -o xtrace
+#set up deduplication
+
+
+
+
+java -Xmx4g -jar /gpfs/home/e130/RDPTools/classifier.jar rm-dupseq -d -i $GTDB_loc/working_files/ssu_all_right_class.fna -o $GTDB_loc/working_files/ssu_all_right_class_dedup.fna
+
+echo "GTDB dedup" >> $current/progress
+
+

@@ -1,6 +1,4 @@
-echo $1
 set -o xtrace
-current=$1
 PR2_loc=$current"/PR2"
 echo $PR2_loc
 
@@ -30,9 +28,14 @@ cat $PR2_initial | /gpfs/home/e130/seqkit/seqkit grep -r -p "k:Eukaryota" |/gpfs
 
 cd $current
 cd ..
-sbatch --export=ALL $root/PR2_ribotyper_batch
+sbatch --export=ALL  $scripts/PR2_ribotyper_batch
 
-sleep 5h
+while [ $(squeue -u e130 |grep 'pr2_ribo'|wc -l) != 0 ]
+do
+ sleep 10m
+
+
+done
 
 #######
 #Separate out Eukaryote sequences which are not assigned to SSU.Eukaryote or SSU.Euk-microsporidia as primary match
@@ -63,3 +66,5 @@ grep ">" $PR2_loc"/working_files/plastid_uchime_high_conf_chimeras.fna" | sed 's
 
 cp $PR2_loc"/working_files/plastid_uchime_high_conf_chimeras.id" $current/final_files/pr2_version_5.0.0_SSU_plastid_chimeras
 cp $current/PR2/working_files/eukaryota_ribotyper_v2_output/eukaryota_ribotyper_output.ribotyper_v2_output.not_eukarya $current/final_files/pr2_version_5.0.0_SSU_non_eukaryotes_mislabelled
+
+echo "PR2 process" >> $current/progress
