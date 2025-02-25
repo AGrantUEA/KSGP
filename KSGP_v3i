@@ -14,7 +14,7 @@
 #script to create KSGP
 export OMP_NUM_THREADS=48
 set -o xtrace
-export root=/gpfs/home/e130/KSGP2
+export root=/gpfs/home/e130/KSGP
 export scripts=$root/scripts
 
 export PATH="$root/scripts:$PATH"
