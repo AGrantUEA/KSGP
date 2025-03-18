@@ -31,12 +31,32 @@ grep '>' $current/GTDB/working_files/ssu_all_Bacteria_good_incorrect.fna | wc -l
 echo
 echo "Wrong Kingdom/Domain in LOOT stage 1"
 wc -l < $current/GTDB/working_files/ssu_all_wrong_kingdom.id
+echo "right kingdom after LOOT stage 1 "
+grep -c '>' $GTDB_loc/working_files/ssu_all_right_kingdom.fna
+
 echo "Wrong Kingdom/Domain/Phylum/Class in LOOT stage 2"
 wc -l < $current/GTDB/working_files/ssu_all_wrong_class.id
+
+echo "right to Class level after LOOT stage 2"
+grep -c '>' $GTDB_loc/working_files/ssu_all_right_class.fna
+
 
 echo
 echo "After cleaning and deduplication GTDB contains"
 grep -c '>' $GTDB_loc/working_files/ssu_all_right_class_dedup.fna
+
+echo "Karst contains"
+grep -c '>' $karst
+
+echo "after removing LSU sequences"
+grep -c '>' $karst_loc"/working_files/karst_ssu.fna" 
+echo "after deduplication" 
+grep -c '>' $current/Karst/working_files/karst_ssu_clus_id.fna
+
+echo "Number of prokaryotes in Silva"
+grep -c '>' $SILVA_loc/working_files/silva_prokaryotes.fasta 
+echo "number remaining after clearning" 
+grep -c '>' $SILVA_loc/silva_prokaryotes_cleaned.fasta
 
 
 echo

@@ -23,7 +23,7 @@ cd ..
 cd ..
 #run ribotyper
 
-sbatch --export=ALL /gpfs/home/e130/KSGP/ribotyper_GTDB
+sbatch --export=ALL $root/scripts/ribotyper_GTDB
 
 
 while [ $(squeue -u e130 |grep 'GTDB_RT'|wc -l) != 0 ]

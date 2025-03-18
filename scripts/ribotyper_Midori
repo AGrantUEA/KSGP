@@ -19,4 +19,4 @@ set -o xtrace
 
 
 
-ribotyper -f -n 18  /gpfs/home/e130/KSGP/v3/Midori/MIDORI2_LONGEST_NUC_GB261_srRNA_RDP.fasta /gpfs/home/e130/KSGP/v3/Midori/working_files/Midori_ribotyper_output
+ribotyper -f -n 18  $current/Midori/MIDORI2_LONGEST_NUC_GB261_srRNA_RDP.fasta $current/Midori/working_files/Midori_ribotyper_output

@@ -1,5 +1,4 @@
-echo $1
-current=$1
+
 Midori_loc=$current"/Midori"
 echo $Midori_loc
 

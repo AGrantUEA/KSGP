@@ -9,7 +9,7 @@ sed 's/ /%/'  $GTDB_loc"/working_files/ssu_all_ribovore_Bacteria_and_Archaea.fna
 
 
 #set up tax file for LOOT
-cat /gpfs/home/e130/KSGP/taxheader > $GTDB_loc"/working_files/ssu_all_ribovore_RDP.tax"
+cat /gpfs/home/e130/KSGP2/taxheader > $GTDB_loc"/working_files/ssu_all_ribovore_RDP.tax"
 grep '>' $GTDB_loc"/working_files/ssu_all_ribovore_Bacteria_and_Archaea_RDP.fna" |sed 's/>//'  |sed 's/;/\t/g'|sed 's/Root\t//'>>$GTDB_loc"/working_files/ssu_all_ribovore_RDP.tax"
 
 

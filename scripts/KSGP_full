@@ -244,6 +244,7 @@ sintaxout2tax $current/to_annotate/raw.sintax $current/final_files/annotated_usi
 
 cat $current/final_files/annotated_using_sintax.tax $current/final_files/GTDB_plus.tax > $current/final_files/KSGP.tax
 cat $current/final_files/GTDB_plus.fasta $current/to_annotate/raw.fasta > $current/final_files/KSGP.fasta
+
 echo "KSGP sintax" >> $current/progress
 fi
 
@@ -257,7 +258,7 @@ cat $current/to_annotate/raw.fasta.hier $current/to_annotate/nohits.hier > $curr
 
 module add R
 cd $current
-Rscript  /gpfs/home/e130/KSGP/process_clusters
+Rscript  $root/scripts/process_clusters
 cd ..
 echo "Process clusters" >> $current/progress
 

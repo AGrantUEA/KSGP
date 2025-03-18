@@ -15,7 +15,7 @@ pwd
 
 
 set -o xtrace
-current=$root$version
+current=$root/$version
 
 GTDB_loc=$current"/GTDB"
 

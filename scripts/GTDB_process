@@ -13,7 +13,7 @@ echo "Number of sequences in GTDB"
 grep -c '>' $initial
 
 #remove size annotations and sequences shorter than 200 bp
-sed 's/\[.*//'  $initial |/gpfs/home/e130/seqkit/seqkit seq -m 200 > GTDB_ssu_temp.fna
+sed 's/\[.*//'  $initial |/gpfs/home/e130/seqkit/seqkit seq -m 200 -g > GTDB_ssu_temp.fna
 
 
 #generate tax file and strip fasta file down to id
@@ -132,7 +132,7 @@ grep -c 'd__Archaea' $GTDB_loc"/working_files/ssu_all_Bacteria.fna"
 /gpfs/home/e130/seqkit/seqkit grep -rnv --threads 48 -p "Archaea" $GTDB_loc"/working_files/ssu_all_Bacteria_good.fna"> $GTDB_loc"/working_files/ssu_all_Bacteria_good_correct.fna"
 /gpfs/home/e130/seqkit/seqkit grep -rn --threads 48 -p "Archaea" $GTDB_loc"/working_files/ssu_all_Bacteria_good.fna"> $GTDB_loc"/working_files/ssu_all_Bacteria_good_labelled_archaea.fna"
 
-cat $GTDB_loc"/working_files/ssu_all_Archaea_good_correct.fna" $GTDB_loc"/working_files/ssu_all_Archaea_fail_correct.fna" $GTDB_loc"/working_files/ssu_all_Bacteria_good.fna" > $GTDB_loc"/working_files/ssu_all_ribovore_Bacteria_and_Archaea.fna"
+cat $GTDB_loc"/working_files/ssu_all_Archaea_good_correct.fna" $GTDB_loc"/working_files/ssu_all_Bacteria_good.fna" > $GTDB_loc"/working_files/ssu_all_ribovore_Bacteria_and_Archaea.fna"
 grep -c '>' $GTDB_loc"/working_files/ssu_all_Archaea_good_correct.fna"
 grep -c '>' $GTDB_loc"/working_files/ssu_all_Archaea_fail_correct.fna"
 grep -c '>' $GTDB_loc"/working_files/ssu_all_Bacteria_good.fna"
@@ -148,7 +148,7 @@ sed 's/ /%/'  $GTDB_loc"/working_files/ssu_all_ribovore_Bacteria_and_Archaea.fna
 
 
 #set up tax file for LOOT
-cat /gpfs/home/e130/KSGP/taxheader > $GTDB_loc"/working_files/ssu_all_ribovore_RDP.tax"
+cat $root/scripts/taxheader > $GTDB_loc"/working_files/ssu_all_ribovore_RDP.tax"
 grep '>' $GTDB_loc"/working_files/ssu_all_ribovore_Bacteria_and_Archaea_RDP.fna" |sed 's/>//'  |sed 's/;/\t/g'|sed 's/Root\t//'>>$GTDB_loc"/working_files/ssu_all_ribovore_RDP.tax"
 
 
@@ -183,7 +183,7 @@ cat $GTDB_loc/working_files/ssu_all_ribovore_Bacteria_and_Archaea_RDP.fna.split/
 
 
 #set up tax file for LOOT
-cat  /gpfs/home/e130/KSGP/taxheader  > $GTDB_loc"/working_files/ssu_all_ribovore_RDP2.tax"
+cat  $root/scripts/taxheader  > $GTDB_loc"/working_files/ssu_all_ribovore_RDP2.tax"
 grep '>' $GTDB_loc/working_files/ssu_all_right_kingdom.fna |sed 's/>//'  |sed 's/;/\t/g' |sed 's/Root\t//' >> $GTDB_loc"/working_files/ssu_all_ribovore_RDP2.tax"
 
 

@@ -1,5 +1,5 @@
 set -o xtrace
-export karst_loc=$current"/Karst"
+
 echo $karst_loc
 
 

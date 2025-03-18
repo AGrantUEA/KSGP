@@ -4,7 +4,7 @@ echo $SILVA_loc
 #Convert to DNA
 #extract bacteria and archaea
 /gpfs/home/e130/seqkit/seqkit seq --rna2dna $SILVA_loc/SILVA_138.2_SSURef_NR99_tax_silva.fasta | /gpfs/home/e130/seqkit/seqkit grep -n -r -p Eukary |sed 's/\t.*//'> $SILVA_loc/working_files/silva_eukaryotes.fasta
-/gpfs/home/e130/seqkit/seqkit seq --rna2dna $SILVA_loc/SILVA_138.2_SSURef_NR99_tax_silva.fasta | /gpfs/home/e130/seqkit/seqkit grep -n -r -f  /gpfs/home/e130/KSGP/to_extract |sed 's/ .*//'> $SILVA_loc/working_files/silva_prokaryotes.fasta
+/gpfs/home/e130/seqkit/seqkit seq --rna2dna $SILVA_loc/SILVA_138.2_SSURef_NR99_tax_silva.fasta | /gpfs/home/e130/seqkit/seqkit grep -n -r -f  $root/scripts/to_extract |sed 's/ .*//'> $SILVA_loc/working_files/silva_prokaryotes.fasta
 cd $root
 sbatch --export=ALL  $scripts/ribotyper_silva
 
