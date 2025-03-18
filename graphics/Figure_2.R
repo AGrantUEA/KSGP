@@ -13,14 +13,14 @@ library(lattice)
 load("AR_keep_v2_phyloseq.Rdata")
 taxa=as.data.frame(physeq@tax_table[,1])
 
-ARGPM=read.table('E:/Documents/OneDrive - University of East Anglia/Abdullah/KSGP scripts/ArchaeaGTDBplus_v3.uc',header = FALSE,sep="\t")
+ARGPM=read.table('E:/Documents/OneDrive - University of East Anglia/Abdullah/KSGP scripts/ArchaeaGTDB_mar25.uc',header = FALSE,sep="\t")
 str(ARGPM)
 xmerged=merge(ARGPM,taxa,by.x="V9",by.y="row.names")
 tmerged=xmerged[which(xmerged$Domain!="?"),]
 GPMmerged=tmerged[which(tmerged$Domain=="Archaea"),]
 
 
-ARGPMSK=read.table('E:/Documents/OneDrive - University of East Anglia/Abdullah/KSGP scripts/ArchaeaKSGP_v2.uc',header = FALSE,sep="\t")
+ARGPMSK=read.table('E:/Documents/OneDrive - University of East Anglia/Abdullah/KSGP scripts/ArchaeaKSGP_mar25.uc',header = FALSE,sep="\t")
 str(ARGPMSK)
 
 xmerged=merge(ARGPMSK,taxa,by.x="V9",by.y="row.names")
@@ -45,7 +45,7 @@ combined2$V4=as.numeric(combined2$V4)
 
 
 
-pdf("figure_2b.pdf",width=8,height=8) 
+pdf("final/figure_2b.pdf",width=8,height=8) 
 
 p = ggplot(combined2,aes(x=V4_g,y=V4)) +
   theme(axis.title = element_text(size = 20))   +
@@ -68,7 +68,7 @@ grid.arrange(p1,h2,h1,ncol=2,widths=c(4,1),heights=c(4,1))
 
 dev.off()
 
-pdf("figure_2a.pdf",width=8,height=8) 
+pdf("final/figure_2a.pdf",width=8,height=8) 
 
 
 p = ggplot(combined2,aes(x=V4_g,y=V4_k)) +

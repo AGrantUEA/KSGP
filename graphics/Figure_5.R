@@ -16,7 +16,7 @@ library(viridis)
 #install.packages("dendextend")
 
 #load("phyloseq_KSG_trimmed2.Rdata")
-load("KSGP_v3_keep_phyloseq.Rdata")
+load("KSGP_v3.1_keep_phyloseq.Rdata")
 table(physeq@tax_table@.Data[,1])
 physeq2=prune_taxa(physeq@tax_table@.Data[,1]=="Archaea",physeq)
 table(physeq2@tax_table@.Data[,2])
@@ -107,6 +107,7 @@ p <- ggplot(stacked, aes(variable, value, fill = Phylum)) +
 p
 
 
-pdf("figure_5.pdf",width=16,height=6.2) 
+pdf("final/figure_5.pdf",width=10,height=6.2) 
 p
 dev.off()
+

@@ -7,13 +7,13 @@ library(ggplot2)
 library(dplyr)
 library(stats)
 
-taxonomy=read.table("KSGP_dec_24_hiera_BLAST.txt",sep="\t",header=TRUE)
+taxonomy=read.table("KSGP_v3.1_hiera_BLAST.txt",sep="\t",header=TRUE)
 
 #setwd("E:/Documents/OneDrive - University of East Anglia/Abdullah/Lotus/AR/final_blasts")
 
 #nearest=read.table("karst.uc",sep="\t")
-nearestgtdb=read.table("ArchaeaGTDBplus_v3.uc",sep="\t", header = FALSE)
-both=read.table("ArchaeaKSGP_v3.uc",sep="\t",header=FALSE)
+nearestgtdb=read.table("ArchaeaGTDBplus_v3.1.uc",sep="\t", header = FALSE)
+both=read.table("ArchaeaKSGP_v3.1.uc",sep="\t",header=FALSE)
 #silva=read.table("silva2.uc",sep="\t",header=FALSE)
 #both2=data.frame(both$V9,both$V4,both$V10)
 
@@ -35,7 +35,7 @@ lines(c(0,39),c(88.,88),lty=2,col="red")
 
 exclude=c("B1Sed10-29","EX4484-52","Hydrothermarchaeota","Methanobacteriota","Methanobacteriota_B","Nanohaloarchaeota","SpSt-1190")
 toplotx=toplot[which(!toplot$X1 %in% exclude),]
-pdf("boxplot.pdf",width=12)
+pdf("final/boxplot.pdf",width=12)
 boxplot((as.numeric(toplotx$X2))~toplotx$X3*toplotx$X1,ylim=c(75,100),col=(c("gold","darkgreen")),cex.axis=0.5,
         at=c(1,2,4,5,7,8,10,11,13,14,16,17,19,20,22,23,25,26,28,29,31,32),xlab="",ylab="Percentage similarity")
 lines(c(0,39),c(91.,91),lty=3,col="blue")
@@ -45,7 +45,7 @@ dev.off()
 labs=rownames(table(toplotx$X1))
 labs[1]="Unknown"
 xpos=c(1.5,5.5,9.5,13.5,17.5,21.5,25.5,29.5,33.5,37.5,41.5)
-pdf("Figure4b.pdf",width=12)
+pdf("final/Figure4b.pdf",width=12)
 par(mar=c(10.1, 4.1, 4.1, 2.1))
 boxplot((as.numeric(toplotx$X2))~toplotx$X3*toplotx$X1,ylim=c(75,100),col=(c("gold","darkgreen")),cex.axis=1.0,
         at=c(1,2,5,6,9,10,13,14,17,18,21,22,25,26,29,30,33,34,37,38,41,42),xlab="",ylab="Percentage similarity", xaxt="n")

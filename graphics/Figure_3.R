@@ -37,7 +37,7 @@ for (ii in 1:4) {
 }
 pp=pp+annotation_custom(textGrob("a",gp=gpar(col="black"),hjust=0),xmin=0.01,xmax=0.1,ymin=14000,ymax=14500)
 pp
-pdf("figure_3a.pdf",width=8,height=8) 
+pdf("final/figure_3a.pdf",width=8,height=8) 
 
 pp
 
@@ -65,7 +65,7 @@ tipcol4=ifelse(physeq@tax_table@.Data[,2]=="?","cadetblue1",tipcol4)
 library(grid)
 
 ncols=c("red","purple","brown","yellow","green","pink","cadetblue1")
-labtext=c("Thermoproteota","Asgardarchaeota","Thermoplasmatota","Aenigmatarchaeota","Nanoarchaeota","Other","Not resolved")
+labtext=c("Thermoproteota","Asgardarchaeota","Thermoplasmatota","Aenigmatarchaeota","Nanoarchaeota","Other","Unresolved by LCA")
 yymin=5000
 yinc=500
 pp2=ggtree(treex)+geom_tippoint(color=tipcol4,size = 1)
@@ -77,14 +77,14 @@ yymin=yymin-yinc
 pp2=pp2+annotation_custom(textGrob("b",gp=gpar(col="black"),hjust=0),xmin=0.0,xmax=0.05,ymin=11000,ymax=11500)
 pp2
 
-pdf("figure_3b.pdf",width=8,height=8) 
+pdf("final/figure_3b.pdf",width=8,height=8) 
 
 pp2
 
 dev.off()
 
 
-pdf("figure_3_all.pdf",width=16,height=8) 
+pdf("final/figure_3_all.pdf",width=16,height=8) 
 
 grid.arrange(pp,pp2,nrow=1)
 

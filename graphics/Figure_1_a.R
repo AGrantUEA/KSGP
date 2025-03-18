@@ -18,7 +18,7 @@ load("AR_keep_v2_phyloseq.Rdata")
 counts=rowSums(physeq@otu_table)
 
 
-pdf("figure_1a.pdf",width=8,height=8) 
+pdf("final/figure_1a.pdf",width=8,height=8) 
 
 for (j in 1:n){
  

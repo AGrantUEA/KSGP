@@ -20,7 +20,7 @@ tokeep=rownames(physeq@tax_table[which(physeq@tax_table[,1]!="?"),1])
 
 
 
-pdf("figure_1b.pdf",width=8,height=8) 
+pdf("final/figure_1b.pdf",width=8,height=8) 
 
 for (j in 1:n){
  
