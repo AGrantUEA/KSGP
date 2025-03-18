@@ -1,0 +1,54 @@
+#!/bin/bash 
+#SBATCH --mail-type=FAIL #Mail events (NONE, BEGIN, END, FAIL, ALL)
+#SBATCH --mail-user=e130@uea.ac.uk #Where to send mail
+#SBATCH -p compute-64-512 #Which partition to use
+#SBATCH --mem=30G #Maximum memory required for job
+#SBATCH -t 128:00:00
+#SBATCH --job-name=KSGP_3i #Arbitrary name for job
+#SBATCH -o logs/KSGP_3i_full-%j.out #Standard output log
+#SBATCH -e logs/KSGP_3i_full-%j.out #Standard error log
+#SBATCH --cpus-per-task=48
+#SBATCH --ntasks=1
+
+
+#script to create KSGP
+export OMP_NUM_THREADS=48
+set -o xtrace
+export root=/gpfs/home/e130/KSGP2
+export scripts=$root/scripts
+
+export PATH="$root/scripts:$PATH"
+
+export version="v3.1"
+export current=$root/$version
+
+export GTDB_source=https://data.ace.uq.edu.au/public/gtdb/data/releases/release220/220.0/genomic_files_all/ssu_all_r220.fna
+export GTDB_ssu=ssu_all_r220
+export PR2_source=https://github.com/pr2database/pr2database/releases/download/v5.0.0/pr2_version_5.0.0_SSU_UTAX.fasta.gz
+export PR2_full=pr2_version_5.0.0_SSU_UTAX
+export Midori_source=https://www.reference-midori.info/download/Databases/GenBank261_2024-06-15/RDP/longest/MIDORI2_LONGEST_NUC_GB261_srRNA_RDP.fasta.gz
+export ncbi_archaea=https://ftp.ncbi.nlm.nih.gov/refseq/TargetedLoci/Archaea/archaea.16SrRNA.fna.gz
+export ncbi_bacteria=https://ftp.ncbi.nlm.nih.gov/refseq/TargetedLoci/Bacteria/bacteria.16SrRNA.fna.gz
+export karst=/gpfs/home/e130/lotus2/DB/OBEP01.fasta
+export karst_loc=$current"/Karst"
+export GTDB_loc=$current/GTDB
+export SILVA_loc=$current/Silva
+
+export PR2run=1
+export karstrun=1
+export midorirun=1
+export silvaget=1
+export silvarun=1
+export GTDBgetrun=1
+export GTDBribovorerun=1
+export loot1run=1
+export loot2run=1
+export deduprun=1
+export GTDBconstruct=1
+export KSGPconstruct=1
+export KSGPsintax=1
+export KSGPplus=1
+
+
+KSGP_full
+
