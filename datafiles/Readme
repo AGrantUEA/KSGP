@@ -1,0 +1,3 @@
+OTU.fna is a fasta file of all Archaea OTUs used in the paper
+KSGP_v3.1_keep_phyloseq.Rdata contains an R Phyloseq object containing all the OTU, their abundances and annotations using KSGP Sintax v 3.1
+KSGP_plus_v3.1_keep_phyloseq.Rdata contains an R Phyloseq object containing all the OTU, their abundances and annotations using KSGP+ v 3.1
