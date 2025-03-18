@@ -1,3 +1,7 @@
+These files contain sequences that were removed from the component databases This resulted from:
+a) Identification as from organelles or the wrong domain by Ribovore
+b) Identification by RDP LOOT as wrongly labelled at the level of Domain, Phylum or Class
+
 karst_LSU.fna						Sequences in Karst data that are identified as Large Subunit Ribosomal RNA by Ribovore. Too large to uplaod here, but available on request.
 mt_incorrect_RDP.fasta					Sequences from Midori that are not identified as mitochondrial
 plastid_uchime_high_conf_chimeras.fna			Plastid sequences in PR2 database that appear to be chimaeric
@@ -11,8 +15,8 @@ ssu_all_Bacteria_fail.fna				Sequences labelled as Bacteria in GTDB 220 that fai
 ssu_all_Bacteria_good_incorrect.fna			Sequences labelled as Bacteria in GTDB 220 that are identified as Archaea by Ribovore
 ssu_all_Chloroplast.fna					Sequences in GTDB 220 that are identified by Ribovore as chloroplasts
 ssu_all_Eukarya.fna					Sequences in GTDB 220 that are identified by Ribovore as eukaryote SSU sequences
-ssu_all_LSU.fna						Sequences in GTDB 220 that are identified by Ribovore as apicoplasts
-ssu_all_microsporidia.fna				Sequences in GTDB 220 that are identified by Ribovore as LSU seq
+ssu_all_LSU.fna						Sequences in GTDB 220 that are identified by Ribovore as LSU sequences
+ssu_all_microsporidia.fna				Sequences in GTDB 220 that are identified by Ribovore as microsporidia SSU sequences
 ssu_all_mito.fna					Sequences in GTDB 220 that are identified by Ribovore as mitochondria
 ssu_all_NoHits.fna					Sequences in GTDB 220 that have no hits in Ribovore
 ssu_all_wrong_class.id					Identifiers of sequences in GTDB 220 that are identified as incorrectly labelled at Domain, phylum or class level in the second round of LOOT
